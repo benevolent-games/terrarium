@@ -1,0 +1,55 @@
+{
+	"name": "@benev/terrarium",
+	"version": "0.0.0-dev.0",
+	"description": "outdoor world generator",
+	"license": "MIT",
+	"author": "Chase Moskal <chasemoskal@gmail.com>",
+	"type": "module",
+	"files": [
+		"x",
+		"s"
+	],
+	"scripts": {
+		"build": "run-s clean && run-p compile importly",
+		"importly": "importly < package-lock.json > x/importmap.json",
+		"clean": "rimraf x && mkdirp x",
+		"dev": "run-p start watch",
+		"bundledemo": "rollup x/demo.js --plugin @rollup/plugin-node-resolve --format iife --file x/demo.bundle.js && terser --compress --mangle -- x/demo.bundle.js > x/demo.bundle.min.js && echo 'done demo.bundle.min.js'",
+		"bundledemo-watch": "chokidar 'x/**/*.js' -i 'x/**/*.{bundle.js,min.js}' -c 'npm run -s bundledemo'",
+		"watch": "tsc -w",
+		"compile": "tsc",
+		"start": "http-server",
+		"test": "exit 0"
+	},
+	"dependencies": {
+		"@babylonjs/core": "^5.31.0",
+		"@babylonjs/loaders": "^5.31.0",
+		"@chasemoskal/magical": "^0.0.1",
+		"@rollup/plugin-node-resolve": "^15.0.1",
+		"chokidar-cli": "^3.0.0",
+		"es-module-shims": "^1.6.2",
+		"rollup": "^3.2.5",
+		"simplex-noise": "^4.0.1",
+		"terser": "^5.15.1"
+	},
+	"devDependencies": {
+		"http-server": "^14.1.1",
+		"importly": "^0.2.0",
+		"mkdirp": "^1.0.4",
+		"npm-run-all": "^4.1.5",
+		"rimraf": "^3.0.2",
+		"typescript": "^4.8.4"
+	},
+	"keywords": [
+		"3d",
+		"games"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/benevolent-games/terrarium.git"
+	},
+	"bugs": {
+		"url": "https://github.com/benevolent-games/terrarium/issues"
+	},
+	"homepage": "https://github.com/benevolent-games/terrarium#readme"
+}
