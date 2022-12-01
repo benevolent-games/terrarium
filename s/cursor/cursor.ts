@@ -43,7 +43,7 @@ export function makeCursor({
 		const x = positionLeft
 		const y = positionTop
 		context.clearRect(0, 0, canvasWidth, canvasHeight)
-		if (!settings.useOperatingSystemCursor && isLocked()) {
+		if (!settings.enableGravityAndCollisions && isLocked()) {
 			context.beginPath()
 			context.arc(x, y, 7, 0, 2 * Math.PI, false)
 			context.arc(x, y, 4, 0, 2 * Math.PI, false)
@@ -95,7 +95,7 @@ export function makeCursor({
 		isLocked,
 		listeners,
 		lock() {
-			if (!settings.useOperatingSystemCursor && !isLocked())
+			if (!settings.enableGravityAndCollisions && !isLocked())
 				canvas.requestPointerLock()
 		},
 		onresize,

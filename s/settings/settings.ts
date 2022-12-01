@@ -5,7 +5,7 @@ import {makeStore} from "../toolbox/store.js"
 import {proxyState} from "../toolbox/proxy-state.js"
 
 export interface Settings {
-	useOperatingSystemCursor: boolean
+	enableGravityAndCollisions: boolean
 }
 
 export function makeSettings() {
@@ -13,7 +13,7 @@ export function makeSettings() {
 	const onSettingsChange = new Set<(settings: Settings) => void>()
 	const {writable, readable} = proxyState(
 		store.load() ?? {
-			useOperatingSystemCursor: false,
+			enableGravityAndCollisions: false,
 		},
 		settings => {
 			renderSettings()
@@ -31,13 +31,13 @@ export function makeSettings() {
 			<label data-setting="useOperatingSystemCursor">
 				<input
 					type="checkbox"
-					?checked=${writable.useOperatingSystemCursor}
+					?checked=${writable.enableGravityAndCollisions}
 					@input=${(event: InputEvent) => {
 						const input = event.target as HTMLInputElement
-						writable.useOperatingSystemCursor = input.checked
+						writable.enableGravityAndCollisions = input.checked
 					}}
 					/>
-				<span>use operating system cursor</span>
+				<span>Enable gravity and collisions</span>
 			</label>
 		`
 		render(result, element)

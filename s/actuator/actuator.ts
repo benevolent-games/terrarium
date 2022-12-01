@@ -8,10 +8,11 @@ import "@babylonjs/core/Culling/ray.js"
 import {Oracle} from "../oracle/oracle.js"
 import {makeGround} from "../landscape/ground.js"
 import {makeTheater} from "../theater/theater.js"
+import {makeSettings} from "../settings/settings.js"
 import {setupLighting} from "../landscape/lighting.js"
 import {makeRandomToolkit} from "../toolbox/randomly.js"
 import {sprinkleProps} from "../landscape/sprinkle-props.js"
-import makeSpectatorCamera from "../cameras/spectator-camera.js"
+import {makeSpectatorCamera} from "../cameras/spectator-camera.js"
 
 
 export function makeActuator({
@@ -20,6 +21,7 @@ export function makeActuator({
 		oracle: Oracle
 	}) {
 
+	const settings = makeSettings()
 	const theater = makeTheater()
 
 	function resizeAll() {
@@ -32,14 +34,26 @@ export function makeActuator({
 
 	return {
 		theater,
+		settings,
 		async initialize() {
 			const mapSize = 1000
 			const cliffSlopeFactor = 0.4
 			const randomly = makeRandomToolkit()
 
-			makeSpectatorCamera({
+			const {updateTargetHeight, smoothUpdateForCameraHeight} = makeSpectatorCamera({
 				theater,
 				sampleHeight: oracle.sampleHeight
+			})
+
+			let gravityEnabled = settings.readable.enableGravityAndCollisions
+
+			settings.onSettingsChange.add((settinngs) => {
+				gravityEnabled = settinngs.enableGravityAndCollisions
+			})
+
+			theater.renderLoop.add(() => {
+				updateTargetHeight(gravityEnabled)
+				smoothUpdateForCameraHeight(gravityEnabled)
 			})
 
 			await makeGround({
