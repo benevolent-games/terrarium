@@ -1,10 +1,9 @@
 
-import {makeRtsWorld} from "./rts-world.js"
+import {makeTerrarium} from "./main.js"
 
-const world = makeRtsWorld()
+const world = makeTerrarium()
 
-document.body.appendChild(world.container)
-document.body.appendChild(world.settings.element)
+document.body.appendChild(world.theater.canvas)
 ;(<any>window).theater = world.theater
 
 world.initialize()

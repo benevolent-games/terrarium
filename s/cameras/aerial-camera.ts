@@ -1,11 +1,10 @@
 
-import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
-
 import {v3} from "../toolbox/v3.js"
-import {Cursor} from "../cursor/cursor.js"
 import {cap} from "../toolbox/numpty.js"
+import {Cursor} from "../cursor/cursor.js"
 import {Theater} from "../theater/theater.js"
 import {InputTracker} from "../inputs/input-tracker.js"
+import {ArcRotateCamera} from "@babylonjs/core/Cameras/arcRotateCamera.js"
 
 const circle = 2 * Math.PI
 
