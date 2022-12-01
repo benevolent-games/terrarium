@@ -3,7 +3,7 @@ import {Theater} from "../theater/theater.js"
 import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
 import {UniversalCamera} from "@babylonjs/core/Cameras/universalCamera.js"
 
-export default function makeSpectatorCamera({
+export function makeSpectatorCamera({
 		theater, sampleHeight
 	}: {
 		theater: Theater
@@ -29,14 +29,16 @@ export default function makeSpectatorCamera({
 	let targetHeight = 0
 	const minimumHeightOffGround = 10
 
-	function updateTargetHeight() {
+	function updateTargetHeight(gravityEnabled: boolean) {
+		if(!gravityEnabled) return
 		targetHeight = sampleHeight(
 			camera.globalPosition.x,
 			camera.globalPosition.z,
 		)
 	}
 
-	function smoothUpdateForCameraHeight() {
+	function smoothUpdateForCameraHeight(gravityEnabled: boolean) {
+		if(!gravityEnabled) return
 		const currentHeight = camera.position.y
 		const difference = targetHeight - currentHeight
 		const fractionOfDifference = difference * 0.1
@@ -51,10 +53,11 @@ export default function makeSpectatorCamera({
 		}
 	}
 
-	theater.renderLoop.add(() => {
-		updateTargetHeight()
-		smoothUpdateForCameraHeight()
-	})
+	
 
-	return camera
+	return {
+		camera,
+		updateTargetHeight,
+		smoothUpdateForCameraHeight
+	}
 }
