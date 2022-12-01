@@ -5,7 +5,7 @@ import {V3} from "../toolbox/v3.js"
 import {Theater} from "../theater/theater.js"
 import {spawnBox} from "../hand/spawn-box.js"
 import {loop2d} from "../toolbox/loop2d.js"
-import {TerrainGenerator} from "../landscape/terrain-generator.js"
+import {Oracle} from "../oracle/oracle.js"
 
 export function makeNavigator({
 		mapSize, resolution, theater, cliffSlopeFactor, terrainGenerator,
@@ -14,7 +14,7 @@ export function makeNavigator({
 		theater: Theater
 		resolution: number
 		cliffSlopeFactor: number
-		terrainGenerator: TerrainGenerator
+		terrainGenerator: Oracle
 	}) {
 
 	console.log("nav", resolution)

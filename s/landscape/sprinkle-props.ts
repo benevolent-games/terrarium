@@ -6,8 +6,8 @@ import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 import {ShadowControl} from "./lighting.js"
 import {Theater} from "../theater/theater.js"
 import {Randomly} from "../toolbox/randomly.js"
-import {TerrainGenerator} from "./terrain-generator.js"
 import {loadGlb} from "../toolbox/babylon/load-glb.js"
+import {Oracle} from "../oracle/oracle.js"
 import {sprinkleTrees, TreeDetails} from "./sprinkling/trees.js"
 
 export async function sprinkleProps({
@@ -25,7 +25,7 @@ export async function sprinkleProps({
 		randomly: Randomly
 		shadowControl: ShadowControl
 		cliffSlopeFactor: number
-		terrainGenerator: TerrainGenerator
+		terrainGenerator: Oracle
 		treeDetails: TreeDetails
 		forestAssetsUrl: string
 	}) {

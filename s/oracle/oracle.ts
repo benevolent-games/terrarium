@@ -4,9 +4,9 @@ import {v3, V3} from "../toolbox/v3.js"
 import {Randomly} from "../toolbox/randomly.js"
 import {prepareNoise} from "../toolbox/noise.js"
 
-export type TerrainGenerator = ReturnType<typeof makeTerrainGenerator>
+export type Oracle = ReturnType<typeof makeOracle>
 
-export function makeTerrainGenerator({
+export function makeOracle({
 		randomly, layers, treeDensityScale,
 	}: {
 		randomly: Randomly

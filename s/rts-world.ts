@@ -1,7 +1,7 @@
 
 import "@babylonjs/core/Materials/standardMaterial.js"
-import "@babylonjs/loaders/glTF/2.0/index.js"
 import "@babylonjs/core/Lights/Shadows/index.js"
+import "@babylonjs/loaders/glTF/2.0/index.js"
 import "@babylonjs/core/Culling/ray.js"
 
 import {makeHand} from "./hand/hand.js"
@@ -15,11 +15,11 @@ import {makeSettings} from "./settings/settings.js"
 import {setupLighting} from "./landscape/lighting.js"
 import {makeWorldContainer} from "./world/container.js"
 import {makeRandomToolkit} from "./toolbox/randomly.js"
-import {makeAerialCamera} from "./aerial/aerial-camera.js"
+import {makeAerialCamera} from "./cameras/aerial-camera.js"
 import {sprinkleProps} from "./landscape/sprinkle-props.js"
 import {cursorIconBeta} from "./cursor/icons/cursor-icon-beta.js"
 import {setupFullscreenHandler} from "./world/setup-fullscreen.js"
-import {makeTerrainGenerator} from "./landscape/terrain-generator.js"
+import {makeOracle} from "./oracle/oracle.js"
 import {makeInputTracker, nameForMouseButton} from "./inputs/input-tracker.js"
 
 export function makeRtsWorld() {
@@ -71,7 +71,7 @@ export function makeRtsWorld() {
 				sampleHeight: (x, y) => sampleHeight(x, y),
 			})
 
-			const terrainGenerator = makeTerrainGenerator({
+			const terrainGenerator = makeOracle({
 				randomly,
 				treeDensityScale: 200,
 				layers: [
