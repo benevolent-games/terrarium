@@ -37,7 +37,10 @@ export function makeActuator({
 			const cliffSlopeFactor = 0.4
 			const randomly = makeRandomToolkit()
 
-			makeSpectatorCamera(theater.scene)
+			makeSpectatorCamera({
+				theater,
+				sampleHeight: oracle.sampleHeight
+			})
 
 			await makeGround({
 				theater,
