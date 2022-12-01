@@ -1,10 +1,10 @@
 
 import {Theater} from "../theater/theater.js"
-import {TerrainGenerator} from "../landscape/terrain-generator.js"
+import {Oracle} from "../oracle/oracle.js"
 
 export function makeUnit({}: {
 		theater: Theater
-		terrainGenerator: TerrainGenerator
+		terrainGenerator: Oracle
 	}) {
 	return {}
 }

@@ -5,7 +5,7 @@ import {Vector3} from "@babylonjs/core/Maths/math.js"
 import {ShadowControl} from "../lighting.js"
 import {v3, V3} from "../../toolbox/v3.js"
 import {Randomly} from "../../toolbox/randomly.js"
-import {TerrainGenerator} from "../terrain-generator.js"
+import {Oracle} from "../../oracle/oracle.js"
 
 type Range = {
 	min: number
@@ -38,7 +38,7 @@ export function sprinkleTrees({
 		treeBases: Mesh[][]
 		cliffSlopeFactor: number
 		shadowControl: ShadowControl
-		terrainGenerator: TerrainGenerator
+		terrainGenerator: Oracle
 	}) {
 
 	function between(range: Range) {

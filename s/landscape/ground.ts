@@ -7,7 +7,7 @@ import {VertexData} from "@babylonjs/core/Meshes/mesh.vertexData.js"
 
 import {V3} from "../toolbox/v3.js"
 import {Theater} from "../theater/theater.js"
-import {TerrainGenerator} from "./terrain-generator.js"
+import {Oracle} from "../oracle/oracle.js"
 import {loadShader} from "../toolbox/babylon/load-shader.js"
 import {Vector2} from "@babylonjs/core/Maths/math.js"
 
@@ -26,7 +26,7 @@ export async function makeGround({
 		normalStrength: number
 		groundShaderUrl: string
 		cliffSlopeFactor: number
-		terrainGenerator: TerrainGenerator
+		terrainGenerator: Oracle
 	}) {
 
 	const ground = MeshBuilder.CreateGround("ground", {
@@ -53,13 +53,14 @@ export async function makeGround({
 		noiseFrequency: 40,
 	})
 
+	// ground.checkCollisions = true
 	ground.material = shader.material
 	return ground
 }
 
 function morphGround({ground, terrainGenerator}: {
 		ground: Mesh
-		terrainGenerator: TerrainGenerator
+		terrainGenerator: Oracle
 	}) {
 
 	function displace(x: number, y: number, z: number): V3 {
