@@ -16,6 +16,11 @@ export function makeTheater() {
 		useMaterialMeshMap: true,
 	})
 
+	scene.onPointerDown = evnt => {
+		if(evnt.button === 0) engine.enterPointerlock();
+		if(evnt.button === 1) engine.exitPointerlock();
+	}
+
 	scene.clearColor = new Color4(62 / 255, 129 / 255, 186 / 255, 1)
 	scene.ambientColor = new Color3(0.005, 0.005, 0.005)
 	;(<any>window).engine = engine
