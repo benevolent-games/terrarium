@@ -6,6 +6,8 @@ import {ShadowControl} from "../lighting.js"
 import {v3, V3} from "../../toolbox/v3.js"
 import {Randomly} from "../../toolbox/randomly.js"
 import {Oracle} from "../../oracle/oracle.js"
+import {NodeMaterial} from "@babylonjs/core/Materials/Node/nodeMaterial.js"
+import {Scene} from "@babylonjs/core/scene.js"
 
 type Range = {
 	min: number
