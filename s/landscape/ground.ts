@@ -55,6 +55,7 @@ export async function makeGround({
 
 	// ground.checkCollisions = true
 	ground.material = shader.material
+	ground.receiveShadows = true
 	return ground
 }
 

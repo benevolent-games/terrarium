@@ -39,6 +39,7 @@ export async function sprinkleNewProps({
 	])
 
 	for (const mesh of assets.meshes) {
+		mesh.receiveShadows = true
 		if (mesh.material?.name === "pinebark"){
 			mesh.material = pineBark
 		}

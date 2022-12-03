@@ -64,8 +64,8 @@ export function makeActuator({
 				terrainGenerator: oracle,
 				cliffSlopeFactor,
 				normalStrength: 1,
-				groundShaderUrl: "/assets/shader10.json",
-				// groundShaderUrl: "https://dl.dropbox.com/s/gp5yabh4zjpi7iz/terrain-shader-10.json",
+				// groundShaderUrl: "/assets/shader10.json",
+				groundShaderUrl: "https://dl.dropbox.com/s/gp5yabh4zjpi7iz/terrain-shader-10.json",
 			})
 
 			const {shadowControl} = setupLighting({
@@ -75,7 +75,9 @@ export function makeActuator({
 					distance: 100,
 					intensity: 1.5,
 				},
-				shadows: undefined,
+				shadows: {
+					softness: 10
+				},
 			})
 	
 			await sprinkleNewProps({
