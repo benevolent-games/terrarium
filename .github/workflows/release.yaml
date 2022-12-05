@@ -54,19 +54,13 @@ jobs:
         rm -rf node_modules
         npm ci --production
 
-    - name: 📂 copy files
-      run: |
-        rm -rf x/node_modules x/s
-        cp -r node_modules/ x/
-        cp -r s/ x/
-
     - name: ⚙️ configure pages
       uses: actions/configure-pages@v2
 
     - name: 📤 upload artifact
       uses: actions/upload-pages-artifact@v1
       with:
-        path: 'x'
+        path: '.'
 
     - name: 🚀 deploy to github pages
       id: deployment
