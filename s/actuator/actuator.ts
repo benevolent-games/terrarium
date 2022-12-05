@@ -75,9 +75,7 @@ export function makeActuator({
 					distance: 100,
 					intensity: 1.5,
 				},
-				shadows: {
-					softness: 10
-				},
+				shadows: undefined
 			})
 	
 			await sprinkleNewProps({

@@ -10,6 +10,10 @@ import {Randomly} from "../toolbox/randomly.js"
 import {loadGlb} from "../toolbox/babylon/load-glb.js"
 import {sprinkleTrees, TreeDetails} from "./sprinkling/trees.js"
 import {NodeMaterial} from "@babylonjs/core/Materials/Node/nodeMaterial.js"
+import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
+import {Texture} from "@babylonjs/core/Materials/Textures/texture.js"
+import {CubeTexture} from "@babylonjs/core/Materials/Textures/cubeTexture.js"
+import {HDRCubeTexture} from "@babylonjs/core/Materials/Textures/hdrCubeTexture.js"
 
 export async function sprinkleNewProps({
 		theater: {scene},
@@ -30,7 +34,7 @@ export async function sprinkleNewProps({
 		treeDetails: TreeDetails
 		forestAssetsUrl: string
 	}) {
-		
+
 	const [assets, pineBark, bareBranches, pineBranches] = await Promise.all([
 		loadGlb(scene, forestAssetsUrl),
 		NodeMaterial.ParseFromSnippetAsync("Y4DZH4", scene),
@@ -38,10 +42,74 @@ export async function sprinkleNewProps({
 		NodeMaterial.ParseFromSnippetAsync("21EE6J", scene)
 	])
 
+	// const x = new StandardMaterial("pine", scene)
+	// x.bumpTexture = new Texture()
+	// x.opacityTexture = new Texture()
+	// x.
+
+	const pineMaterial = (() => {
+		// const mat = new StandardMaterial("pine", scene)!
+		// const normalTex = new Texture(
+		// 	"/assets/pine_grass_textures/pinebark_normal.webp",
+		// 	scene
+		// )
+		// mat.bumpTexture = normalTex
+
+		// const aoTex = new Texture(
+		// 	"/assets/pine_grass_textures/pinebark_ambientocclusion.webp",
+		// 	scene
+		// )
+		// mat.ambientTexture = aoTex
+
+		// const diffuseTex = new Texture(
+		// 	"/assets/pine_grass_textures/pinebark_basecolor.webp",
+		// 	scene
+		// )
+		// mat.diffuseTexture = diffuseTex
+
+		// const specTex = new Texture(
+		// 	"/assets/pine_grass_textures/pinebark_roughness.webp",
+		// 	scene
+		// )
+		// mat.specularTexture = specTex
+
+		const pbr = new PBRMaterial("pbr", scene);
+
+    // pbr.albedoColor = new Color3(1.0, 0.766, 0.336);
+		pbr.metallic = 1; // set to 1 to only use it from the metallicRoughnessTexture
+		pbr.roughness = 1; // set to 1 to only use it from the metallicRoughnessTexture
+
+		pbr.metallicTexture = new Texture("/assets/roughness0-metallic1.png", scene)
+
+		pbr.albedoTexture = new Texture("/assets/pine_grass_textures/pinebark_basecolor.webp", scene)
+
+		pbr.bumpTexture = new Texture("/assets/pine_grass_textures/pinebark_normal.webp", scene)
+
+		pbr.ambientTexture = new Texture("/assets/pine_grass_textures/pinebark_ambientocclusion.webp", scene)
+
+		// pbr.reflectionTexture = new Texture("/assets/monkforest.env", scene)
+		// pbr.reflectionTexture = CubeTexture.CreateFromPrefilteredData("/assets/monks_forest_4k.dds", scene)
+
+		// pbr.reflectionTexture = new Texture("/assets/monkforest.env", scene)
+
+
+    pbr.useRoughnessFromMetallicTextureAlpha = false;
+    pbr.useRoughnessFromMetallicTextureGreen = true;
+    pbr.useMetallnessFromMetallicTextureBlue = true;
+
+		// mat.roughness = 100
+		pbr.invertNormalMapX = true
+		pbr.invertNormalMapY = true
+		// mat.invertNormalMapX = true
+		// mat.invertNormalMapY = true
+
+		return pbr
+	})()
+
 	for (const mesh of assets.meshes) {
 		mesh.receiveShadows = true
 		if (mesh.material?.name === "pinebark"){
-			mesh.material = pineBark
+			mesh.material = pineMaterial
 		}
 		else if (mesh.material?.name === "barebranches"){
 			mesh.material = bareBranches
