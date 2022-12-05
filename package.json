@@ -22,15 +22,15 @@
 		"test": "exit 0"
 	},
 	"dependencies": {
-		"@babylonjs/core": "^5.34.0",
-		"@babylonjs/loaders": "^5.34.0",
+		"@babylonjs/core": "^5.35.1",
+		"@babylonjs/loaders": "^5.35.1",
 		"@chasemoskal/magical": "^0.0.5",
 		"@rollup/plugin-node-resolve": "^15.0.1",
 		"chokidar-cli": "^3.0.0",
 		"es-module-shims": "^1.6.2",
-		"rollup": "^3.5.0",
+		"rollup": "^3.5.1",
 		"simplex-noise": "^4.0.1",
-		"terser": "^5.16.0"
+		"terser": "^5.16.1"
 	},
 	"devDependencies": {
 		"http-server": "^14.1.1",
