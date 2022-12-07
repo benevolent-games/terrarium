@@ -2,6 +2,7 @@
 import {Scene} from "@babylonjs/core/scene.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {Color3, Color4} from "@babylonjs/core/Maths/math.color.js"
+import {CubeTexture} from "@babylonjs/core/Materials/Textures/cubeTexture.js"
 
 export type Theater = ReturnType<typeof makeTheater>
 

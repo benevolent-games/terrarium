@@ -45,22 +45,16 @@ export function setupLighting({
 	}
 
 	if (shadows) {
-		const csmShadowGenerator = new CascadedShadowGenerator(1024, light)
-		// new CascadedShadowGenerator(2048, light)
-		// csmShadowGenerator.bias = -1
-		csmShadowGenerator.shadowMaxZ = 500
-		csmShadowGenerator.usePercentageCloserFiltering = true
-		// csmShadowGenerator.lambda = 0.7
-		// csmShadowGenerator.numCascades = 3
-		csmShadowGenerator.stabilizeCascades = true
-		csmShadowGenerator.transparencyShadow = true
-		csmShadowGenerator.enableSoftTransparentShadow = true
-		// csmShadowGenerator.useBlurExponentialShadowMap = true
-		// csmShadowGenerator.blurScale = 5
+		const shadowmaps = new CascadedShadowGenerator(1024, light);
+		shadowmaps.useBlurExponentialShadowMap = true
+		shadowmaps.blurBoxOffset = 5
+		shadowmaps.transparencyShadow = true
+		shadowmaps.enableSoftTransparentShadow = true
+		shadowmaps.bias = .005
+		shadowmaps.splitFrustum()
 
-		shadowControl.addCaster = (mesh: AbstractMesh) => csmShadowGenerator.addShadowCaster(mesh)
-		shadowControl.removeCaster = (mesh: AbstractMesh) => csmShadowGenerator.removeShadowCaster(mesh)
-
+		shadowControl.addCaster = (mesh: AbstractMesh) => shadowmaps.addShadowCaster(mesh)
+		shadowControl.removeCaster = (mesh: AbstractMesh) => shadowmaps.removeShadowCaster(mesh)
 	}
 
 	function setSunPositionToFollowCamera() {

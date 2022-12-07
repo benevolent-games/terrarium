@@ -9,7 +9,6 @@ import {V3} from "../toolbox/v3.js"
 import {Theater} from "../theater/theater.js"
 import {Oracle} from "../oracle/oracle.js"
 import {loadShader} from "../toolbox/babylon/load-shader.js"
-import {Vector2} from "@babylonjs/core/Maths/math.js"
 
 export async function makeGround({
 		theater: {scene},
@@ -53,7 +52,6 @@ export async function makeGround({
 		noiseFrequency: 40,
 	})
 
-	// ground.checkCollisions = true
 	ground.material = shader.material
 	ground.receiveShadows = true
 	return ground

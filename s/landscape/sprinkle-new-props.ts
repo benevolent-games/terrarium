@@ -9,11 +9,8 @@ import {Theater} from "../theater/theater.js"
 import {Randomly} from "../toolbox/randomly.js"
 import {loadGlb} from "../toolbox/babylon/load-glb.js"
 import {sprinkleTrees, TreeDetails} from "./sprinkling/trees.js"
-import {NodeMaterial} from "@babylonjs/core/Materials/Node/nodeMaterial.js"
-import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 import {Texture} from "@babylonjs/core/Materials/Textures/texture.js"
 import {CubeTexture} from "@babylonjs/core/Materials/Textures/cubeTexture.js"
-import {HDRCubeTexture} from "@babylonjs/core/Materials/Textures/hdrCubeTexture.js"
 
 export async function sprinkleNewProps({
 		theater: {scene},
@@ -35,73 +32,156 @@ export async function sprinkleNewProps({
 		forestAssetsUrl: string
 	}) {
 
-	const [assets, pineBark, bareBranches, pineBranches] = await Promise.all([
-		loadGlb(scene, forestAssetsUrl),
-		NodeMaterial.ParseFromSnippetAsync("Y4DZH4", scene),
-		NodeMaterial.ParseFromSnippetAsync("PMTXZE", scene),
-		NodeMaterial.ParseFromSnippetAsync("21EE6J", scene)
-	])
+	const assets = await loadGlb(scene, forestAssetsUrl)
 
-	// const x = new StandardMaterial("pine", scene)
-	// x.bumpTexture = new Texture()
-	// x.opacityTexture = new Texture()
-	// x.
+	// const ambient = CubeTexture.CreateFromPrefilteredData("https://dl.dropbox.com/s/daondf07p2qgy7z/monkforest.env", scene)
+	// scene.environmentTexture = ambient
 
-	const pineMaterial = (() => {
-		// const mat = new StandardMaterial("pine", scene)!
-		// const normalTex = new Texture(
-		// 	"/assets/pine_grass_textures/pinebark_normal.webp",
-		// 	scene
-		// )
-		// mat.bumpTexture = normalTex
+	const local = false
+	const links = {
+		pineBark: {
+			color: `${local
+				? "/assets/pine_tree_textures/pinebark_basecolor.webp"
+				: "https://dl.dropbox.com/s/lmuvnsivzbcskxp/pinebark_basecolor.webp"
+			}`,
+			roughness: `${local
+				? "/assets/pine_tree_textures/pinebark_armd.webp"
+				: "https://dl.dropbox.com/s/72mtv4khr6fiqov/pinebark_armd.webp"
+			}`,
+			normal: `${local
+				? "/assets/pine_tree_textures/pinebark_normal.webp"
+				: "https://dl.dropbox.com/s/cs0x8g2wg4rwwr2/pinebark_normal.webp"
+			}`,
+		},
+		pineBranch: {
+			color: `${local
+				? "/assets/pine_tree_textures/pinebranches_albedo.webp"
+				: "https://dl.dropbox.com/s/g1p1l5vpreeghmk/pinebranch2_diffuse.webp"
+			}`,
+			roughness: `${local
+				? "/assets/pine_tree_textures/pinebranches_armd.webp"
+				: "https://dl.dropbox.com/s/h9gouiodoohwgds/pinebranch2_armu.webp"
+			}`,
+			normal: `${local
+				? "/assets/pine_tree_textures/pinebranch_normal.webp"
+				: "https://dl.dropbox.com/s/caw965tp6mk7kqd/pinebranch2_normal"
+			}`,
+		},
+		bareBranch: {
+			color: `${local
+				? "/assets/pine_tree_textures/barebranches_albedo.webp"
+				: "https://dl.dropbox.com/s/amehzgee7d9ze6b/barebranches_albedo.webp"
+			}`,
+			roughness: `${local
+				? "/assets/pine_tree_textures/barebranches_armd.webp"
+				: "https://dl.dropbox.com/s/nkdxqpsvrqb6n0o/barebranches_armd.webp"
+			}`,
+			normal: `${local
+				? "/assets/pine_tree_textures/barebranches_normal.webp"
+				: "https://dl.dropbox.com/s/1xzj9wnf5oofteb/barebranches_normal.webp"
+			}`,
+		}
+	}
 
-		// const aoTex = new Texture(
-		// 	"/assets/pine_grass_textures/pinebark_ambientocclusion.webp",
-		// 	scene
-		// )
-		// mat.ambientTexture = aoTex
-
-		// const diffuseTex = new Texture(
-		// 	"/assets/pine_grass_textures/pinebark_basecolor.webp",
-		// 	scene
-		// )
-		// mat.diffuseTexture = diffuseTex
-
-		// const specTex = new Texture(
-		// 	"/assets/pine_grass_textures/pinebark_roughness.webp",
-		// 	scene
-		// )
-		// mat.specularTexture = specTex
-
+	const pineBark = (() => {
 		const pbr = new PBRMaterial("pbr", scene);
 
-    // pbr.albedoColor = new Color3(1.0, 0.766, 0.336);
-		pbr.metallic = 1; // set to 1 to only use it from the metallicRoughnessTexture
-		pbr.roughness = 1; // set to 1 to only use it from the metallicRoughnessTexture
+		const color = new Texture(links.pineBark.color, scene)
+		const roughness = new Texture(links.pineBark.roughness, scene)
+		const normal = new Texture(links.pineBark.normal, scene)
 
-		pbr.metallicTexture = new Texture("/assets/roughness0-metallic1.png", scene)
-
-		pbr.albedoTexture = new Texture("/assets/pine_grass_textures/pinebark_basecolor.webp", scene)
-
-		pbr.bumpTexture = new Texture("/assets/pine_grass_textures/pinebark_normal.webp", scene)
-
-		pbr.ambientTexture = new Texture("/assets/pine_grass_textures/pinebark_ambientocclusion.webp", scene)
-
-		// pbr.reflectionTexture = new Texture("/assets/monkforest.env", scene)
-		// pbr.reflectionTexture = CubeTexture.CreateFromPrefilteredData("/assets/monks_forest_4k.dds", scene)
-
-		// pbr.reflectionTexture = new Texture("/assets/monkforest.env", scene)
-
-
-    pbr.useRoughnessFromMetallicTextureAlpha = false;
-    pbr.useRoughnessFromMetallicTextureGreen = true;
-    pbr.useMetallnessFromMetallicTextureBlue = true;
+		pbr.useRoughnessFromMetallicTextureAlpha = false;
+		pbr.useRoughnessFromMetallicTextureGreen = true;
+		pbr.useMetallnessFromMetallicTextureBlue = true;
 
 		// mat.roughness = 100
 		pbr.invertNormalMapX = true
 		pbr.invertNormalMapY = true
-		// mat.invertNormalMapX = true
-		// mat.invertNormalMapY = true
+		pbr.metallic = 1.0
+		pbr.roughness = 1.0
+		// pbr.reflectionTexture = ambient
+		// pbr.ambientTexture = ambient
+		pbr.metallicTexture = roughness
+		pbr.useRoughnessFromMetallicTextureAlpha = false
+		pbr.useRoughnessFromMetallicTextureGreen = true
+		pbr.useMetallnessFromMetallicTextureBlue = true
+		pbr.bumpTexture = normal
+		pbr.invertNormalMapX = true
+		pbr.invertNormalMapY = true
+		pbr.albedoTexture = color
+		pbr.albedoTexture.hasAlpha = true
+		pbr.useAlphaFromAlbedoTexture = true
+		pbr.backFaceCulling = false
+		pbr.transparencyMode = 1
+		pbr.alphaCutOff = .4
+		pbr.subSurface.isTranslucencyEnabled = true
+		pbr.subSurface.translucencyIntensity = .2
+
+		pbr.needDepthPrePass = true
+
+		return pbr
+	})()
+
+	const pineBranch = (() => {
+		const pbr = new PBRMaterial("pbr", scene)
+
+		const color = new Texture(links.pineBranch.color, scene)
+		const roughness = new Texture(links.pineBranch.roughness, scene)
+		const normal = new Texture(links.pineBranch.normal, scene)
+
+		pbr.metallic = 1.0
+		pbr.roughness = 1.0
+		// pbr.reflectionTexture = ambient
+		// pbr.ambientTexture = ambient
+		pbr.metallicTexture = roughness
+		pbr.useRoughnessFromMetallicTextureAlpha = false
+		pbr.useRoughnessFromMetallicTextureGreen = true
+		pbr.useMetallnessFromMetallicTextureBlue = true
+		pbr.bumpTexture = normal
+		pbr.invertNormalMapX = true
+		pbr.invertNormalMapY = true
+		pbr.albedoTexture = color
+		pbr.albedoTexture.hasAlpha = true
+		pbr.useAlphaFromAlbedoTexture = true
+		pbr.backFaceCulling = false
+		pbr.transparencyMode = 1
+		pbr.alphaCutOff = .4
+		pbr.subSurface.isTranslucencyEnabled = true
+		pbr.subSurface.translucencyIntensity = .2
+
+		pbr.needDepthPrePass = true
+
+		return pbr
+	})()
+
+	const bareBranch = (() => {
+		const pbr = new PBRMaterial("pbr", scene)
+
+		const color = new Texture(links.bareBranch.color, scene)
+		const roughness = new Texture(links.bareBranch.roughness, scene)
+		const normal = new Texture(links.bareBranch.normal, scene)
+
+		pbr.metallic = 1.0
+		pbr.roughness = 1.0
+		// pbr.reflectionTexture = ambient
+		// pbr.ambientTexture = ambient
+		pbr.metallicTexture = roughness
+		pbr.useRoughnessFromMetallicTextureAlpha = false
+		pbr.useRoughnessFromMetallicTextureGreen = true
+		pbr.useMetallnessFromMetallicTextureBlue = true
+		pbr.bumpTexture = normal
+		pbr.invertNormalMapX = true
+		pbr.invertNormalMapY = true
+		pbr.albedoTexture = color
+		pbr.albedoTexture.hasAlpha = true
+		pbr.useAlphaFromAlbedoTexture = true
+		pbr.backFaceCulling = false
+		pbr.transparencyMode = 1
+		pbr.alphaCutOff = .4
+		pbr.subSurface.isTranslucencyEnabled = true
+		pbr.subSurface.translucencyIntensity = .2
+
+		pbr.needDepthPrePass = true
 
 		return pbr
 	})()
@@ -109,17 +189,13 @@ export async function sprinkleNewProps({
 	for (const mesh of assets.meshes) {
 		mesh.receiveShadows = true
 		if (mesh.material?.name === "pinebark"){
-			mesh.material = pineMaterial
+			mesh.material = pineBark
 		}
 		else if (mesh.material?.name === "barebranches"){
-			mesh.material = bareBranches
-			mesh.material.backFaceCulling = false
-			mesh.material.needDepthPrePass = true
+			mesh.material = bareBranch
 		}
 		else if (mesh.material?.name === "pinebranches"){
-			mesh.material = pineBranches
-			mesh.material.backFaceCulling = false
-			mesh.material.needDepthPrePass = true
+			mesh.material = pineBranch
 		}
 	}
 
