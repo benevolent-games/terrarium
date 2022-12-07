@@ -63,8 +63,8 @@ export function makeActuator({
 				terrainGenerator: oracle,
 				cliffSlopeFactor,
 				normalStrength: 1,
-				groundShaderUrl: "/assets/shader10.json",
-				// groundShaderUrl: "https://dl.dropbox.com/s/gp5yabh4zjpi7iz/terrain-shader-10.json",
+				// groundShaderUrl: "/assets/shader10.json",
+				groundShaderUrl: "https://dl.dropbox.com/s/gp5yabh4zjpi7iz/terrain-shader-10.json",
 			})
 
 			const {shadowControl} = setupLighting({
@@ -86,8 +86,8 @@ export function makeActuator({
 				shadowControl,
 				cliffSlopeFactor,
 				terrainGenerator: oracle,
-				forestAssetsUrl: "/assets/pinetrees3.glb",
-				// forestAssetsUrl: "https://dl.dropbox.com/s/zc97n64px8lttwe/pinetrees3.glb",
+				// forestAssetsUrl: "/assets/pinetrees3.glb",
+				forestAssetsUrl: "https://dl.dropbox.com/s/zc97n64px8lttwe/pinetrees3.glb",
 				treeDetails: {
 					numberOfTrees: 256,
 					spaceBetweenTrees: 7,
