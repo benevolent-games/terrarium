@@ -29,7 +29,6 @@ export function makeTheater() {
 	renderer.enabled = true
 
 	scene.clearColor = new Color4(62 / 255, 129 / 255, 186 / 255, 1)
-	scene.ambientColor = new Color3(0.005, 0.005, 0.005)
 	;(<any>window).engine = engine
 
 	const renderLoop = new Set<() => void>()

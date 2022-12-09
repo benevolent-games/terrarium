@@ -72,7 +72,7 @@ export function makeActuator({
 				sun: {
 					direction: [-1, -1, -1],
 					distance: 100,
-					intensity: 1.5,
+					intensity: 5,
 				},
 				shadows: {
 					softness: 20

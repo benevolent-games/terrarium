@@ -34,6 +34,8 @@ export async function sprinkleNewProps({
 
 	const assets = await loadGlb(scene, forestAssetsUrl)
 
+	const ambient = scene.ambientColor = new Color3(0.2, 0.23, 0.18)
+
 	const local = false
 	const links = {
 		pineBark: {
@@ -115,7 +117,9 @@ export async function sprinkleNewProps({
 				material.backFaceCulling = false
 				material.useAlphaFromAlbedoTexture = true
 				material.subSurface.isTranslucencyEnabled = true
-				material.subSurface.translucencyIntensity = .2
+				material.subSurface.translucencyIntensity = 1
+				material.ambientColor = ambient
+				material.reflectionColor = ambient
 			}
 	
 			material.metallic = 1.0
