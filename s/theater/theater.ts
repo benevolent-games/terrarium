@@ -1,8 +1,11 @@
 
+import "@babylonjs/core/Rendering/depthRendererSceneComponent.js"
+
 import {Scene} from "@babylonjs/core/scene.js"
 import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {Color3, Color4} from "@babylonjs/core/Maths/math.color.js"
 import {CubeTexture} from "@babylonjs/core/Materials/Textures/cubeTexture.js"
+import {DepthRenderer} from "@babylonjs/core/Rendering/depthRenderer.js"
 
 export type Theater = ReturnType<typeof makeTheater>
 
@@ -21,6 +24,9 @@ export function makeTheater() {
 		if(evnt.button === 0) engine.enterPointerlock();
 		if(evnt.button === 1) engine.exitPointerlock();
 	}
+
+	const renderer = new DepthRenderer(scene)
+	renderer.enabled = true
 
 	scene.clearColor = new Color4(62 / 255, 129 / 255, 186 / 255, 1)
 	scene.ambientColor = new Color3(0.005, 0.005, 0.005)

@@ -86,8 +86,8 @@ export function makeActuator({
 				shadowControl,
 				cliffSlopeFactor,
 				terrainGenerator: oracle,
-				// forestAssetsUrl: "/assets/pinetrees3.glb",
-				forestAssetsUrl: "https://dl.dropbox.com/s/zc97n64px8lttwe/pinetrees3.glb",
+				// forestAssetsUrl: "/assets/pinetrees4.glb",
+				forestAssetsUrl: "https://dl.dropbox.com/s/eqxip7yqps2r9fi/pinetrees4.glb",
 				treeDetails: {
 					numberOfTrees: 256,
 					spaceBetweenTrees: 7,

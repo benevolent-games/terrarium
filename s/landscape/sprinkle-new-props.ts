@@ -34,9 +34,6 @@ export async function sprinkleNewProps({
 
 	const assets = await loadGlb(scene, forestAssetsUrl)
 
-	// const ambient = CubeTexture.CreateFromPrefilteredData("https://dl.dropbox.com/s/daondf07p2qgy7z/monkforest.env", scene)
-	// scene.environmentTexture = ambient
-
 	const local = false
 	const links = {
 		pineBark: {
@@ -83,120 +80,59 @@ export async function sprinkleNewProps({
 		}
 	}
 
-	const pineBark = (() => {
-		const pbr = new PBRMaterial("pbr", scene);
+	const pineBarkAlbedo = new Texture(links.pineBark.color, scene)
+	const pineBarkRoughness = new Texture(links.pineBark.roughness, scene)
+	const pineBarkNormal = new Texture(links.pineBark.normal, scene)
 
-		const color = new Texture(links.pineBark.color, scene)
-		const roughness = new Texture(links.pineBark.roughness, scene)
-		const normal = new Texture(links.pineBark.normal, scene)
+	const pineBranchAlbedo = new Texture(links.pineBranch.color, scene)
+	const pineBranchRoughness = new Texture(links.pineBranch.roughness, scene)
+	const pineBranchNormal = new Texture(links.pineBranch.normal, scene)
 
-		pbr.useRoughnessFromMetallicTextureAlpha = false;
-		pbr.useRoughnessFromMetallicTextureGreen = true;
-		pbr.useMetallnessFromMetallicTextureBlue = true;
-
-		// mat.roughness = 100
-		pbr.invertNormalMapX = true
-		pbr.invertNormalMapY = true
-		pbr.metallic = 1.0
-		pbr.roughness = 1.0
-		// pbr.reflectionTexture = ambient
-		// pbr.ambientTexture = ambient
-		pbr.metallicTexture = roughness
-		pbr.useRoughnessFromMetallicTextureAlpha = false
-		pbr.useRoughnessFromMetallicTextureGreen = true
-		pbr.useMetallnessFromMetallicTextureBlue = true
-		pbr.bumpTexture = normal
-		pbr.invertNormalMapX = true
-		pbr.invertNormalMapY = true
-		pbr.albedoTexture = color
-		pbr.albedoTexture.hasAlpha = true
-		pbr.useAlphaFromAlbedoTexture = true
-		pbr.backFaceCulling = false
-		pbr.transparencyMode = 1
-		pbr.alphaCutOff = .4
-		pbr.subSurface.isTranslucencyEnabled = true
-		pbr.subSurface.translucencyIntensity = .2
-
-		pbr.needDepthPrePass = true
-
-		return pbr
-	})()
-
-	const pineBranch = (() => {
-		const pbr = new PBRMaterial("pbr", scene)
-
-		const color = new Texture(links.pineBranch.color, scene)
-		const roughness = new Texture(links.pineBranch.roughness, scene)
-		const normal = new Texture(links.pineBranch.normal, scene)
-
-		pbr.metallic = 1.0
-		pbr.roughness = 1.0
-		// pbr.reflectionTexture = ambient
-		// pbr.ambientTexture = ambient
-		pbr.metallicTexture = roughness
-		pbr.useRoughnessFromMetallicTextureAlpha = false
-		pbr.useRoughnessFromMetallicTextureGreen = true
-		pbr.useMetallnessFromMetallicTextureBlue = true
-		pbr.bumpTexture = normal
-		pbr.invertNormalMapX = true
-		pbr.invertNormalMapY = true
-		pbr.albedoTexture = color
-		pbr.albedoTexture.hasAlpha = true
-		pbr.useAlphaFromAlbedoTexture = true
-		pbr.backFaceCulling = false
-		pbr.transparencyMode = 1
-		pbr.alphaCutOff = .4
-		pbr.subSurface.isTranslucencyEnabled = true
-		pbr.subSurface.translucencyIntensity = .2
-
-		pbr.needDepthPrePass = true
-
-		return pbr
-	})()
-
-	const bareBranch = (() => {
-		const pbr = new PBRMaterial("pbr", scene)
-
-		const color = new Texture(links.bareBranch.color, scene)
-		const roughness = new Texture(links.bareBranch.roughness, scene)
-		const normal = new Texture(links.bareBranch.normal, scene)
-
-		pbr.metallic = 1.0
-		pbr.roughness = 1.0
-		// pbr.reflectionTexture = ambient
-		// pbr.ambientTexture = ambient
-		pbr.metallicTexture = roughness
-		pbr.useRoughnessFromMetallicTextureAlpha = false
-		pbr.useRoughnessFromMetallicTextureGreen = true
-		pbr.useMetallnessFromMetallicTextureBlue = true
-		pbr.bumpTexture = normal
-		pbr.invertNormalMapX = true
-		pbr.invertNormalMapY = true
-		pbr.albedoTexture = color
-		pbr.albedoTexture.hasAlpha = true
-		pbr.useAlphaFromAlbedoTexture = true
-		pbr.backFaceCulling = false
-		pbr.transparencyMode = 1
-		pbr.alphaCutOff = .4
-		pbr.subSurface.isTranslucencyEnabled = true
-		pbr.subSurface.translucencyIntensity = .2
-
-		pbr.needDepthPrePass = true
-
-		return pbr
-	})()
+	const bareBranchAlbedo = new Texture(links.bareBranch.color, scene)
+	const bareBranchRoughness = new Texture(links.bareBranch.roughness, scene)
+	const bareBranchNormal = new Texture(links.bareBranch.normal, scene)
 
 	for (const mesh of assets.meshes) {
 		mesh.receiveShadows = true
-		if (mesh.material?.name === "pinebark"){
-			mesh.material = pineBark
+		const material = mesh.material as PBRMaterial
+		if (material) {
+			if (material.name === "pinebark") {
+				material.metallicTexture = pineBarkRoughness
+				material.albedoTexture = pineBarkAlbedo
+				material.bumpTexture = pineBarkNormal
+			}
+			else if (material.name === "barebranches"){
+				material.metallicTexture = bareBranchRoughness
+				material.albedoTexture = bareBranchAlbedo
+				material.bumpTexture = bareBranchNormal
+				material.backFaceCulling = false
+				material.useAlphaFromAlbedoTexture = true
+			}
+			else if (material.name === "pinebranches"){
+				material.metallicTexture = pineBranchRoughness
+				material.albedoTexture = pineBranchAlbedo
+				material.bumpTexture = pineBranchNormal
+				material.backFaceCulling = false
+				material.useAlphaFromAlbedoTexture = true
+				material.subSurface.isTranslucencyEnabled = true
+				material.subSurface.translucencyIntensity = .2
+			}
+	
+			material.metallic = 1.0
+			material.roughness = 1.0
+			material.useRoughnessFromMetallicTextureAlpha = false
+			material.useRoughnessFromMetallicTextureGreen = true
+			material.useMetallnessFromMetallicTextureBlue = true
+			material.invertNormalMapX = true
+			material.invertNormalMapY = true
+			if (material.albedoTexture)
+				material.albedoTexture.hasAlpha = true
+			material.transparencyMode = 1
+			material.alphaCutOff = .4
+	
+			material.needDepthPrePass = true
 		}
-		else if (mesh.material?.name === "barebranches"){
-			mesh.material = bareBranch
-		}
-		else if (mesh.material?.name === "pinebranches"){
-			mesh.material = pineBranch
-		}
+
 	}
 
 	// hide all base meshes
