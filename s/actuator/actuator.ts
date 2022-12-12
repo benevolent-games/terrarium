@@ -14,6 +14,7 @@ import {makeRandomToolkit} from "../toolbox/randomly.js"
 import {sprinkleProps} from "../landscape/sprinkle-props.js"
 import {makeSpectatorCamera} from "../cameras/spectator-camera.js"
 import {sprinkleNewProps} from "../landscape/sprinkle-new-props.js"
+import {makeFramerateDisplay} from "../toolbox/make-framerate-display.js"
 
 
 export function makeActuator({
@@ -24,6 +25,11 @@ export function makeActuator({
 
 	const settings = makeSettings()
 	const theater = makeTheater()
+	const frameRateDisplay = makeFramerateDisplay({
+		getFramerate() {
+			return theater.engine.getFps()
+		},
+	})
 
 	function resizeAll() {
 		theater.onresize()
@@ -35,6 +41,7 @@ export function makeActuator({
 	return {
 		theater,
 		settings,
+		frameRateDisplay,
 		async initialize() {
 			const mapSize = 500
 			const cliffSlopeFactor = 0.4

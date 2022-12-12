@@ -25,29 +25,12 @@ canvas {
 	aspect-ratio: 16/9;
 }
 
-/* .container {
-	position: relative;
-	display: block;
-	width: 100%;
-	aspect-ratio: 16 / 9;
-	background: #100e09;
+.framerate {
+	position: fixed;
+	color: whitesmoke;
+	font-size: 2rem;
+	top: 0;
+	right: 10px;
+	opacity: .7;
+	text-shadow: -2px 2px 3px black;
 }
-
-.container :is(canvas) {
-	display: block;
-	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
-	pointer-events: none;
-}
-
-.container canvas:focus {
-	outline: none;
-}
-
-.container .cursor {
-	position: relative;
-	display: block;
-	z-index: 1;
-} */
