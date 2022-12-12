@@ -45,7 +45,7 @@ export function setupLighting({
 	}
 
 	if (shadows) {
-		const shadowmaps = new CascadedShadowGenerator(1024, light);
+		const shadowmaps = new CascadedShadowGenerator(512, light);
 		shadowmaps.useBlurExponentialShadowMap = true
 		shadowmaps.blurBoxOffset = 5
 		shadowmaps.transparencyShadow = true

@@ -11,6 +11,7 @@ import {loadGlb} from "../toolbox/babylon/load-glb.js"
 import {sprinkleTrees, TreeDetails} from "./sprinkling/trees.js"
 import {Texture} from "@babylonjs/core/Materials/Textures/texture.js"
 import {CubeTexture} from "@babylonjs/core/Materials/Textures/cubeTexture.js"
+import {Scene, SSAO2RenderingPipeline, Vector3, Vector4} from "@babylonjs/core"
 
 export async function sprinkleNewProps({
 		theater: {scene},
@@ -33,8 +34,21 @@ export async function sprinkleNewProps({
 	}) {
 
 	const assets = await loadGlb(scene, forestAssetsUrl)
-
 	const ambient = scene.ambientColor = new Color3(0.2, 0.23, 0.18)
+
+	// const ssao = new SSAO2RenderingPipeline("ssao", scene, {
+	// 	ssaoRatio: 0.5,
+	// 	blurRatio: 1 
+	// })
+
+	// ssao.samples = 16
+	// ssao.base = 0
+	// ssao.radius = 2
+	// ssao.totalStrength = 10
+	// ssao.maxZ = 600
+	// ssao.minZAspect = 1
+
+	// scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssao", scene.activeCamera);
 
 	const local = false
 	const links = {
@@ -116,8 +130,8 @@ export async function sprinkleNewProps({
 				material.bumpTexture = pineBranchNormal
 				material.backFaceCulling = false
 				material.useAlphaFromAlbedoTexture = true
-				material.subSurface.isTranslucencyEnabled = true
-				material.subSurface.translucencyIntensity = 1
+				// material.subSurface.isTranslucencyEnabled = true
+				// material.subSurface.translucencyIntensity = 1
 				material.ambientColor = ambient
 				material.reflectionColor = ambient
 			}
@@ -158,13 +172,13 @@ export async function sprinkleNewProps({
 		cliffSlopeFactor,
 		treeDetails,
 		treeBases: [
-			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree1_LOD0")),
-			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree2_LOD0")),
-			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree3_LOD0")),
-			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree4_LOD0")),
-			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree5_LOD0")),
-			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree6_LOD0")),
-			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree7_LOD0")),
+			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree1_LOD1")),
+			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree2_LOD1")),
+			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree3_LOD1")),
+			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree4_LOD1")),
+			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree5_LOD1")),
+			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree6_LOD1")),
+			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree7_LOD1")),
 		],
 	})
 }
