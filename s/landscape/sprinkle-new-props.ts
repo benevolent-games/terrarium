@@ -37,18 +37,29 @@ export async function sprinkleNewProps({
 	const ambient = scene.ambientColor = new Color3(0.2, 0.23, 0.18)
 
 	// const ssao = new SSAO2RenderingPipeline("ssao", scene, {
-	// 	ssaoRatio: 0.5,
-	// 	blurRatio: 1 
+	// 	ssaoRatio: 2,
+	// 	blurRatio: 4,
+	// 	combineRatio: 1
 	// })
 
-	// ssao.samples = 16
-	// ssao.base = 0
-	// ssao.radius = 2
-	// ssao.totalStrength = 10
+	// ssao.radius = 10
+	// ssao.totalStrength = 1
+	// ssao.base = 0.15
+	// ssao.samples = 4
 	// ssao.maxZ = 600
-	// ssao.minZAspect = 1
+	// ssao.minZAspect = 0.5
 
-	// scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssao", scene.activeCamera);
+	// scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline(
+	// 	"ssao", scene.activeCamera
+	// )
+	// scene.postProcessRenderPipelineManager.enableEffectInPipeline(
+	// 	"ssao",
+	// 	ssao.SSAOCombineRenderEffect,
+	// 	scene.activeCamera,
+	// )
+	// const gbr = scene.enableGeometryBufferRenderer()
+	// if (gbr) 
+	// 	gbr.renderTransparentMeshes = false
 
 	const local = false
 	const links = {
