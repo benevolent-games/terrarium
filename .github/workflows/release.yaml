@@ -1,6 +1,5 @@
 
-name: release
-
+name: 🚀 release to github pages
 on:
   push:
     branches: ["release"]
@@ -52,12 +51,12 @@ jobs:
     - name: 🗃️ reconstitute node_modules for production
       run: |
         rm -rf node_modules
-        npm ci --production
+        npm ci --omit=dev
 
-    - name: ⚙️ configure pages
+    - name: 📝 configure pages
       uses: actions/configure-pages@v2
 
-    - name: 📤 upload artifact
+    - name: 📤 upload pages artifact
       uses: actions/upload-pages-artifact@v1
       with:
         path: '.'
