@@ -66,7 +66,7 @@ export async function sprinkleNewProps({
 	// if (gbr) 
 	// 	gbr.renderTransparentMeshes = false
 
-	const local = true
+	const local = false
 	const links = {
 		pineBark: {
 			color: `${local
