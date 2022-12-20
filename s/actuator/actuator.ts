@@ -15,7 +15,7 @@ import {sprinkleProps} from "../landscape/sprinkle-props.js"
 import {makeSpectatorCamera} from "../cameras/spectator-camera.js"
 import {sprinkleNewProps} from "../landscape/sprinkle-new-props.js"
 import {makeFramerateDisplay} from "../toolbox/make-framerate-display.js"
-
+import {stopwatch} from "../toolbox/stopwatch.js"
 
 export function makeActuator({
 		oracle
@@ -43,6 +43,8 @@ export function makeActuator({
 		settings,
 		frameRateDisplay,
 		async initialize() {
+			const stopwatchForSetups = stopwatch("setups")
+
 			const mapSize = 500
 			const cliffSlopeFactor = 0.4
 			const randomly = makeRandomToolkit()
@@ -63,6 +65,9 @@ export function makeActuator({
 				smoothUpdateForCameraHeight(gravityEnabled)
 			})
 
+			stopwatchForSetups.log()
+			const stopwatchForGround = stopwatch("ground")
+
 			await makeGround({
 				theater,
 				mapSize,
@@ -73,6 +78,9 @@ export function makeActuator({
 				// groundShaderUrl: "/assets/shader10.json",
 				groundShaderUrl: "https://dl.dropbox.com/s/gp5yabh4zjpi7iz/terrain-shader-10.json",
 			})
+
+			stopwatchForGround.log()
+			const stopwatchForLighting = stopwatch("lighting")
 
 			const {shadowControl} = setupLighting({
 				theater,
@@ -85,7 +93,10 @@ export function makeActuator({
 					softness: 20
 				}
 			})
-	
+
+			stopwatchForLighting.log()
+			const stopwatchForSprinkling = stopwatch("sprinkling")
+
 			await sprinkleNewProps({
 				theater,
 				mapSize,
@@ -117,6 +128,7 @@ export function makeActuator({
 				},
 			})
 
+			stopwatchForSprinkling.log()
 			theater.start()
 		}
 	}
