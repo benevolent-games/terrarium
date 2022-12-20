@@ -10,6 +10,7 @@ import {Randomly} from "../toolbox/randomly.js"
 import {loadGlb} from "../toolbox/babylon/load-glb.js"
 import {sprinkleTrees, TreeDetails} from "./sprinkling/trees.js"
 import {Texture} from "@babylonjs/core/Materials/Textures/texture.js"
+import {SSAO2RenderingPipeline} from "@babylonjs/core"
 
 export async function sprinkleNewProps({
 		theater: {scene},
@@ -34,30 +35,30 @@ export async function sprinkleNewProps({
 	const assets = await loadGlb(scene, forestAssetsUrl)
 	const ambient = scene.ambientColor = new Color3(0.2, 0.23, 0.18)
 
-	// const ssao = new SSAO2RenderingPipeline("ssao", scene, {
-	// 	ssaoRatio: 2,
-	// 	blurRatio: 4,
-	// 	combineRatio: 1
-	// })
+	const ssao = new SSAO2RenderingPipeline("ssao", scene, {
+		ssaoRatio: 2,
+		blurRatio: 4,
+		combineRatio: 1
+	})
 
-	// ssao.radius = 10
-	// ssao.totalStrength = 1
-	// ssao.base = 0.15
-	// ssao.samples = 4
-	// ssao.maxZ = 600
-	// ssao.minZAspect = 0.5
+	ssao.radius = 10
+	ssao.totalStrength = 1
+	ssao.base = 0.15
+	ssao.samples = 4
+	ssao.maxZ = 600
+	ssao.minZAspect = 0.5
 
-	// scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline(
-	// 	"ssao", scene.activeCamera
-	// )
-	// scene.postProcessRenderPipelineManager.enableEffectInPipeline(
-	// 	"ssao",
-	// 	ssao.SSAOCombineRenderEffect,
-	// 	scene.activeCamera,
-	// )
-	// const gbr = scene.enableGeometryBufferRenderer()
-	// if (gbr) 
-	// 	gbr.renderTransparentMeshes = false
+	scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline(
+		"ssao", scene.activeCamera
+	)
+	scene.postProcessRenderPipelineManager.enableEffectInPipeline(
+		"ssao",
+		ssao.SSAOCombineRenderEffect,
+		scene.activeCamera,
+	)
+	const gbr = scene.enableGeometryBufferRenderer()
+	if (gbr) 
+		gbr.renderTransparentMeshes = false
 
 	const local = true
 	const links = {
