@@ -1,5 +1,6 @@
 
 import "@babylonjs/core/Collisions/collisionCoordinator.js"
+import "@babylonjs/core/Engines/Extensions/engine.query.js"
 import "@babylonjs/core/Materials/standardMaterial.js"
 import "@babylonjs/core/Lights/Shadows/index.js"
 import "@babylonjs/loaders/glTF/2.0/index.js"
@@ -18,6 +19,8 @@ import {makeFramerateDisplay} from "../toolbox/make-framerate-display.js"
 import {stopwatch} from "../toolbox/stopwatch.js"
 import {v3} from "../toolbox/v3.js"
 import {DirectionalLight} from "@babylonjs/core/Lights/directionalLight.js"
+import {makeGpuTimeCounter} from "../toolbox/make-gpu-time-counter.js"
+import {EngineInstrumentation} from "@babylonjs/core/Instrumentation/engineInstrumentation.js"
 
 export function makeActuator({
 		oracle
@@ -33,6 +36,15 @@ export function makeActuator({
 		},
 	})
 
+	const instrumentation = new EngineInstrumentation(theater.engine)
+	instrumentation.captureGPUFrameTime = true
+	instrumentation.captureShaderCompilationTime = true
+	const gpuTimeCounter = makeGpuTimeCounter({
+		getCpuTime() {
+			return (instrumentation.gpuFrameTimeCounter.current * 0.000001).toFixed(2)
+		},
+	})
+
 	function resizeAll() {
 		theater.onresize()
 	}
@@ -43,6 +55,7 @@ export function makeActuator({
 	return {
 		theater,
 		settings,
+		gpuTimeCounter,
 		frameRateDisplay,
 		async initialize() {
 			const stopwatchForSetups = stopwatch("setups")
