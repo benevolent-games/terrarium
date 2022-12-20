@@ -10,13 +10,17 @@ import {Randomly} from "../toolbox/randomly.js"
 import {loadGlb} from "../toolbox/babylon/load-glb.js"
 import {sprinkleTrees, TreeDetails} from "./sprinkling/trees.js"
 import {Texture} from "@babylonjs/core/Materials/Textures/texture.js"
-import {SSAO2RenderingPipeline} from "@babylonjs/core"
+// import {SSAO2RenderingPipeline} from "@babylonjs/core"
+import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
+import {GrassDetails, sprinkleGrass} from "./sprinkling/grass.js"
 
 export async function sprinkleNewProps({
 		theater: {scene},
 		mapSize,
 		randomly,
 		treeDetails,
+		grassDetails,
+		grassAssetsUrl,
 		shadowControl,
 		cliffSlopeFactor,
 		terrainGenerator,
@@ -29,36 +33,38 @@ export async function sprinkleNewProps({
 		cliffSlopeFactor: number
 		terrainGenerator: Oracle
 		treeDetails: TreeDetails
+		grassDetails: GrassDetails
+		grassAssetsUrl: string
 		forestAssetsUrl: string
 	}) {
 
 	const assets = await loadGlb(scene, forestAssetsUrl)
 	const ambient = scene.ambientColor = new Color3(0.2, 0.23, 0.18)
+	const grassAssets = await loadGlb(scene, grassAssetsUrl)
+	// const ssao = new SSAO2RenderingPipeline("ssao", scene, {
+	// 	ssaoRatio: 2,
+	// 	blurRatio: 4,
+	// 	combineRatio: 1
+	// })
 
-	const ssao = new SSAO2RenderingPipeline("ssao", scene, {
-		ssaoRatio: 2,
-		blurRatio: 4,
-		combineRatio: 1
-	})
+	// ssao.radius = 10
+	// ssao.totalStrength = 1
+	// ssao.base = 0.15
+	// ssao.samples = 4
+	// ssao.maxZ = 600
+	// ssao.minZAspect = 0.5
 
-	ssao.radius = 10
-	ssao.totalStrength = 1
-	ssao.base = 0.15
-	ssao.samples = 4
-	ssao.maxZ = 600
-	ssao.minZAspect = 0.5
-
-	scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline(
-		"ssao", scene.activeCamera
-	)
-	scene.postProcessRenderPipelineManager.enableEffectInPipeline(
-		"ssao",
-		ssao.SSAOCombineRenderEffect,
-		scene.activeCamera,
-	)
-	const gbr = scene.enableGeometryBufferRenderer()
-	if (gbr) 
-		gbr.renderTransparentMeshes = false
+	// scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline(
+	// 	"ssao", scene.activeCamera
+	// )
+	// scene.postProcessRenderPipelineManager.enableEffectInPipeline(
+	// 	"ssao",
+	// 	ssao.SSAOCombineRenderEffect,
+	// 	scene.activeCamera,
+	// )
+	// const gbr = scene.enableGeometryBufferRenderer()
+	// if (gbr) 
+	// 	gbr.renderTransparentMeshes = false
 
 	const local = true
 	const links = {
@@ -132,6 +138,10 @@ export async function sprinkleNewProps({
 	const bareBranchRoughness = new Texture(links.bareBranch.roughness, scene)
 	const bareBranchNormal = new Texture(links.bareBranch.normal, scene)
 
+	const grassAlbedo = new Texture(links.grass.color, scene)
+	const grassRoughness = new Texture(links.grass.roughness, scene)
+	const grassNormal = new Texture(links.grass.normal, scene)
+
 	for (const mesh of assets.meshes) {
 		mesh.isVisible = false
 		const material = mesh.material as PBRMaterial
@@ -180,8 +190,35 @@ export async function sprinkleNewProps({
 		mesh.doNotSyncBoundingInfo = true
 	}
 
+	const grassMaterial = new PBRMaterial("grassMaterial", scene)
+	grassMaterial.metallicTexture = grassRoughness
+	grassMaterial.albedoTexture = grassAlbedo
+	grassMaterial.bumpTexture = grassNormal
+	grassMaterial.metallic = 1.0
+	grassMaterial.roughness = 1.0
+	// grassMaterial.useRoughnessFromMetallicTextureAlpha = false
+	// grassMaterial.useRoughnessFromMetallicTextureGreen = true
+	// grassMaterial.useMetallnessFromMetallicTextureBlue = true
+	// grassMaterial.invertNormalMapX = true
+	// grassMaterial.invertNormalMapY = true
+	// if (grassMaterial.albedoTexture)
+	// 	grassMaterial.albedoTexture.hasAlpha = true
+	// grassMaterial.transparencyMode = 1
+	// grassMaterial.alphaCutOff = .4
+
+	// grassMaterial.needDepthPrePass = true
+
+	for (const mesh of grassAssets.meshes) {
+		mesh.material = grassMaterial
+		mesh.freezeWorldMatrix()
+		mesh.isPickable = false
+		mesh.doNotSyncBoundingInfo = true
+	}
+
 	// hide all base meshes
 	for (const mesh of assets.meshes)
+		mesh.isVisible = false
+	for (const mesh of grassAssets.meshes)
 		mesh.isVisible = false
 
 	// enable ambient color from scene
@@ -190,6 +227,7 @@ export async function sprinkleNewProps({
 		if (material instanceof PBRMaterial)
 			material.ambientColor = ambientColor
 	}
+	grassMaterial.ambientColor = ambientColor
 
 	sprinkleTrees({
 		mapSize,
@@ -207,5 +245,17 @@ export async function sprinkleNewProps({
 			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree6_LOD1")),
 			<Mesh[]>assets.meshes.filter(m => m.name.startsWith("pinetree7_LOD1")),
 		],
+	})
+
+	sprinkleGrass({
+		mapSize,
+		randomly,
+		shadowControl,
+		terrainGenerator,
+		cliffSlopeFactor,
+		grassDetails,
+		grassBases: [
+			<Mesh[]>grassAssets.meshes.filter(m => m.name.startsWith("grass"))
+		]
 	})
 }

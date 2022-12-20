@@ -95,6 +95,8 @@ export function makeActuator({
 				terrainGenerator: oracle,
 				// forestAssetsUrl: "/assets/pinetrees4.glb",
 				forestAssetsUrl: "https://dl.dropbox.com/s/eqxip7yqps2r9fi/pinetrees4.glb",
+				// grassAssetsUrl: "/assets/grass.glb",
+				grassAssetsUrl: "https://dl.dropbox.com/s/i2s6o6de7u5vxfm/grass.glb",
 				treeDetails: {
 					numberOfTrees: 256,
 					spaceBetweenTrees: 7,
@@ -103,7 +105,16 @@ export function makeActuator({
 						scale: {min: 10.5, max: 20.5},
 						heightAdjustment: {min: -1, max: 2},
 					},
-				}
+				},
+				grassDetails: {
+					numberOfGrass: 200,
+					spaceBetweenGrass: 1,
+					maxGrassPlantingAttempts: 50_000,
+					randomizationRanges: {
+						scale: {min: 0.5, max: 1.5},
+						heightAdjustment: {min: -1, max: 4},
+					},
+				},
 			})
 
 			theater.start()
