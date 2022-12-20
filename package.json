@@ -13,12 +13,12 @@
 		"build": "run-s clean && run-p compile importly",
 		"importly": "importly < package-lock.json > x/importmap.json",
 		"clean": "rimraf x && mkdirp x",
-		"dev": "run-p start watch",
 		"bundledemo": "rollup x/demo.js --plugin @rollup/plugin-node-resolve --format iife --file x/demo.bundle.js && terser --compress --mangle -- x/demo.bundle.js > x/demo.bundle.min.js && echo 'done demo.bundle.min.js'",
 		"bundledemo-watch": "chokidar 'x/**/*.js' -i 'x/**/*.{bundle.js,min.js}' -c 'npm run -s bundledemo'",
 		"watch": "tsc -w",
 		"compile": "tsc",
-		"start": "http-server",
+		"http": "http-server",
+		"start": "run-p http watch",
 		"test": "exit 0"
 	},
 	"dependencies": {
