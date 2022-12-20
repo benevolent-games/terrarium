@@ -12,7 +12,8 @@
 	"scripts": {
 		"build": "run-s clean && run-p compile importly",
 		"importly": "importly < package-lock.json > x/importmap.json",
-		"clean": "rimraf x && mkdirp x",
+		"clean": "rimraf x && mkdirp x && run-s hack-babylon",
+		"hack-babylon": "rimraf node_modules/@babylonjs/core/index.*",
 		"bundledemo": "rollup x/demo.js --plugin @rollup/plugin-node-resolve --format iife --file x/demo.bundle.js && terser --compress --mangle -- x/demo.bundle.js > x/demo.bundle.min.js && echo 'done demo.bundle.min.js'",
 		"bundledemo-watch": "chokidar 'x/**/*.js' -i 'x/**/*.{bundle.js,min.js}' -c 'npm run -s bundledemo'",
 		"watch": "tsc -w",
