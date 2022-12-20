@@ -52,7 +52,8 @@ export async function makeGround({
 		noiseFrequency: 40,
 	})
 
-	ground.material = shader.material
+	// // TODO GROUND MATERIAL
+	// ground.material = shader.material
 	ground.receiveShadows = true
 	return ground
 }
