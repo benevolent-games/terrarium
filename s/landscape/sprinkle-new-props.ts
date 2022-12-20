@@ -10,8 +10,6 @@ import {Randomly} from "../toolbox/randomly.js"
 import {loadGlb} from "../toolbox/babylon/load-glb.js"
 import {sprinkleTrees, TreeDetails} from "./sprinkling/trees.js"
 import {Texture} from "@babylonjs/core/Materials/Textures/texture.js"
-import {CubeTexture} from "@babylonjs/core/Materials/Textures/cubeTexture.js"
-import {Scene, SSAO2RenderingPipeline, Vector3, Vector4} from "@babylonjs/core"
 
 export async function sprinkleNewProps({
 		theater: {scene},
@@ -61,7 +59,7 @@ export async function sprinkleNewProps({
 	// if (gbr) 
 	// 	gbr.renderTransparentMeshes = false
 
-	const local = false
+	const local = true
 	const links = {
 		pineBark: {
 			color: `${local
@@ -104,6 +102,20 @@ export async function sprinkleNewProps({
 				? "/assets/pine_tree_textures/barebranches_normal.webp"
 				: "https://dl.dropbox.com/s/1xzj9wnf5oofteb/barebranches_normal.webp"
 			}`,
+		},
+		grass: {
+			color: `${local
+				? "/assets/pine_tree_textures/grass_albedo.webp"
+				: "https://dl.dropbox.com/s/opvpp8s3kzsdsyk/grass_albedo.webp"
+			}`,
+			roughness: `${local
+				? "/assets/pine_tree_textures/grass_armd.webp"
+				: "https://dl.dropbox.com/s/ohvn8srq5jgh9i3/grass_armd.webp"
+			}`,
+			normal: `${local
+				? "/assets/pine_tree_textures/grass_normals.webp"
+				: "https://dl.dropbox.com/s/8b7emhyl9zsol0x/grass_normals.webp"
+			}`,
 		}
 	}
 
@@ -120,7 +132,7 @@ export async function sprinkleNewProps({
 	const bareBranchNormal = new Texture(links.bareBranch.normal, scene)
 
 	for (const mesh of assets.meshes) {
-		mesh.receiveShadows = true
+		mesh.isVisible = false
 		const material = mesh.material as PBRMaterial
 		if (material) {
 			if (material.name === "pinebark") {
@@ -161,7 +173,10 @@ export async function sprinkleNewProps({
 	
 			material.needDepthPrePass = true
 		}
-
+		mesh.receiveShadows = true
+		mesh.freezeWorldMatrix()
+		mesh.isPickable = false
+		mesh.doNotSyncBoundingInfo = true
 	}
 
 	// hide all base meshes

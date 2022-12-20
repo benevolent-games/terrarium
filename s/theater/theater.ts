@@ -31,7 +31,7 @@ export function makeTheater() {
 	scene.clearColor = new Color4(62 / 255, 129 / 255, 186 / 255, 1)
 	;(<any>window).engine = engine
 	
-	scene.performancePriority = 2
+	// scene.performancePriority = 2
 	const renderLoop = new Set<() => void>()
 
 	return {
