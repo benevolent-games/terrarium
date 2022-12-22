@@ -19,8 +19,9 @@ import {makeFramerateDisplay} from "../toolbox/make-framerate-display.js"
 import {stopwatch} from "../toolbox/stopwatch.js"
 import {v3} from "../toolbox/v3.js"
 import {DirectionalLight} from "@babylonjs/core/Lights/directionalLight.js"
-import {makeGpuTimeCounter} from "../toolbox/make-gpu-time-counter.js"
+import {makeCounters, makeGpuTimeCounter} from "../toolbox/make-gpu-time-counter.js"
 import {EngineInstrumentation} from "@babylonjs/core/Instrumentation/engineInstrumentation.js"
+import {SceneInstrumentation} from "@babylonjs/core/Instrumentation/sceneInstrumentation.js"
 
 export function makeActuator({
 		oracle
@@ -36,12 +37,48 @@ export function makeActuator({
 		},
 	})
 
-	const instrumentation = new EngineInstrumentation(theater.engine)
-	instrumentation.captureGPUFrameTime = true
-	instrumentation.captureShaderCompilationTime = true
-	const gpuTimeCounter = makeGpuTimeCounter({
-		getCpuTime() {
-			return (instrumentation.gpuFrameTimeCounter.current * 0.000001).toFixed(2)
+	const engineInstrumentation = new EngineInstrumentation(theater.engine)
+	engineInstrumentation.captureGPUFrameTime = true
+	engineInstrumentation.captureShaderCompilationTime = true
+
+	const sceneInstrumentation = new SceneInstrumentation(theater.scene)
+	sceneInstrumentation.captureFrameTime = true
+	sceneInstrumentation.captureRenderTime = true
+	sceneInstrumentation.capturePhysicsTime = true
+	sceneInstrumentation.captureInterFrameTime = true
+	sceneInstrumentation.captureCameraRenderTime = true
+	sceneInstrumentation.captureActiveMeshesEvaluationTime = true
+
+	const {
+			gpuFrameTimeCounter,
+			frameTimeCounter,
+			physicsTimeCounter,
+			drawTimeCounter,
+			interFrameCounter,
+			cameraRenderTimeCounter,
+			activeMeshesEvaluationTimeCounter
+		} = makeCounters({
+		getGpuTime: () => {
+			return (engineInstrumentation.gpuFrameTimeCounter.current * 0.000001)
+				.toFixed(2)
+		},
+		getFrameTime() {
+			return (sceneInstrumentation.frameTimeCounter.current).toFixed(2)
+		},
+		getDrawTime() {
+			return (sceneInstrumentation.drawCallsCounter.current).toFixed(2)
+		},
+		getPhysicsTime() {
+			return (sceneInstrumentation.physicsTimeCounter.current).toFixed(2)
+		},
+		getInterFrameTime() {
+			return (sceneInstrumentation.interFrameTimeCounter.current).toFixed(2)
+		},
+		getCameraRenderTime() {
+			return (sceneInstrumentation.cameraRenderTimeCounter.current).toFixed(2)
+		},
+		getActiveMeshesEvaluationTime() {
+			return (sceneInstrumentation.activeMeshesEvaluationTimeCounter.current).toFixed(2)
 		},
 	})
 
@@ -55,7 +92,12 @@ export function makeActuator({
 	return {
 		theater,
 		settings,
-		gpuTimeCounter,
+		gpuFrameTimeCounter,
+		frameTimeCounter,
+		drawTimeCounter,
+		interFrameCounter,
+		cameraRenderTimeCounter,
+		activeMeshesEvaluationTimeCounter,
 		frameRateDisplay,
 		async initialize() {
 			const stopwatchForSetups = stopwatch("setups")
