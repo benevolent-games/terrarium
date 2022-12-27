@@ -1,19 +1,4 @@
 
-export function makeGpuTimeCounter({getCpuTime}: {
-	getCpuTime: () => string
-	}) {
-
-	const element = document.createElement("div")
-	element.className = "gpu-time"
-	element.textContent = "___"
-
-	setInterval(
-		() => element.innerHTML = "gpu frame time: " + getCpuTime() + "ms",
-		100
-	)
-	return element
-}
-
 export function makeCounters({
 		getPhysicsTime, getCameraRenderTime,
 		getGpuTime, getFrameTime, getDrawTime,
@@ -35,6 +20,16 @@ export function makeCounters({
 	const interFrameCounter = document.createElement("div")
 	const cameraRenderTimeCounter = document.createElement("div")
 	const activeMeshesEvaluationTimeCounter = document.createElement("div")
+
+	;[
+		gpuFrameTimeCounter,
+		frameTimeCounter,
+		drawTimeCounter,
+		physicsTimeCounter,
+		interFrameCounter,
+		cameraRenderTimeCounter,
+		activeMeshesEvaluationTimeCounter
+	].map(element => element.classList.add("counter"))
 
 	setInterval(
 		() => {

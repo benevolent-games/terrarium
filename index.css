@@ -34,3 +34,7 @@ canvas {
 	opacity: .7;
 	text-shadow: -2px 2px 3px black;
 }
+
+.counter {
+	opacity: 0.6;
+}
