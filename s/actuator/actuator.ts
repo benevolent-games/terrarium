@@ -22,6 +22,9 @@ import {v3} from "../toolbox/v3.js"
 import {DirectionalLight} from "@babylonjs/core/Lights/directionalLight.js"
 import {EngineInstrumentation} from "@babylonjs/core/Instrumentation/engineInstrumentation.js"
 import {SceneInstrumentation} from "@babylonjs/core/Instrumentation/sceneInstrumentation.js"
+import {computeDiff, Node, QuadNode, Quadtree} from "../quadtree.js"
+import {Vector3} from "@babylonjs/core/Maths/math.js"
+import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 
 export function makeActuator({
 		oracle
@@ -52,7 +55,6 @@ export function makeActuator({
 	const {
 			gpuFrameTimeCounter,
 			frameTimeCounter,
-			physicsTimeCounter,
 			drawTimeCounter,
 			interFrameCounter,
 			cameraRenderTimeCounter,
@@ -102,11 +104,11 @@ export function makeActuator({
 		async initialize() {
 			const stopwatchForSetups = stopwatch("setups")
 
-			const mapSize = 500
-			const cliffSlopeFactor = 0.4
+			const mapSize = 50
+			const cliffSlopeFactor = 0
 			const randomly = makeRandomToolkit()
 
-			const {updateTargetHeight, smoothUpdateForCameraHeight} = makeSpectatorCamera({
+			const {camera, updateTargetHeight, smoothUpdateForCameraHeight} = makeSpectatorCamera({
 				theater,
 				sampleHeight: oracle.sampleHeight
 			})
@@ -124,6 +126,36 @@ export function makeActuator({
 
 			stopwatchForSetups.log()
 			const stopwatchForGround = stopwatch("ground")
+
+			let prev = <QuadNode[]>[]
+
+			// theater.renderLoop.add(() => {
+			// 	const {x, z} = camera.position
+			// 	const boundary = new Node({x:0, y:0, w:200, h:200, center: [0, 0]})
+
+			// 	const q = new Quadtree(boundary.boundary, 10)
+			// 	q.insert([x, z])
+			// 	const c = q.getChildren()
+			// 	// debugger
+			// 	// const r = new Quadtree(boundary.boundary, 1000)
+			// 	// r.insert([1000, 10])
+			// 	// const b = r.getChildren()
+
+			// 	const xc = computeDiff(prev, c)
+			// 	if(xc) {
+			// 		for (const c in xc) {
+			// 			const node = xc[c]
+			// 			const {x, y, w, h} = node.boundary
+
+			// 			const ground = MeshBuilder.CreateGround(`${c}`, {width: w, height: h})
+			// 			ground.position.x = x
+			// 			ground.position.y = y
+
+			// 		}
+			// 	}
+			// 	prev = c
+			// })
+
 
 			await makeGround({
 				theater,
