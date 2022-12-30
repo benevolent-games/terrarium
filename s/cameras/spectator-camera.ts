@@ -18,7 +18,7 @@ export function makeSpectatorCamera({
 
 	camera.attachControl()
 	camera.minZ = 1
-	camera.maxZ = 500
+	camera.maxZ = 5000
 	camera.speed = 2
 	camera.angularSensibility = 4000
 

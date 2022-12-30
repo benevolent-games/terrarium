@@ -26,6 +26,7 @@ import {computeDiff, Node, QuadNode, Quadtree} from "../quadtree.js"
 import {Vector3} from "@babylonjs/core/Maths/math.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
+import {VertexBuffer} from "@babylonjs/core/Buffers/buffer.js"
 
 export function makeActuator({
 		oracle
@@ -128,15 +129,16 @@ export function makeActuator({
 			stopwatchForSetups.log()
 			const stopwatchForGround = stopwatch("ground")
 
-			let prev = <QuadNode[]>[]
-			const boundary = new Node({x:0, z: 0, y:0, w:200, h:200, center: [0, 0]})
-			const q = new Quadtree(boundary.boundary, 10)
+			let prev = <Quadtree[]>[]
+			const boundary = new Node({x:0, z: 0, y:0, w:2000, h:200, center: [0, 0, 0]})
+			const q = new Quadtree(boundary, 10)
 			theater.renderLoop.add(() => {
-				const {x, z} = camera.position
-
-				
+				const {x, z, y} = camera.position
+				console.log(camera.position, "camera")
+				const currentChunk = q.getCurrentNode(camera.position)
+				console.log(currentChunk, "current")
 				console.log(q)
-				q.insert([x, z])
+				q.insert([x, z, y])
 				const c = q.getChildren()
 				// debugger
 				// const r = new Quadtree(boundary.boundary, 1000)
@@ -154,13 +156,13 @@ export function makeActuator({
 						// ground.position.z = z
 						// ground.position.y = y
 						const points = [
-							new Vector3(-x / 2, 0, -z / 2),
-							new Vector3(x / 2, 0, -z / 2),
-							new Vector3(x / 2, 0, z / 2),
-							new Vector3(-x / 2, 0, z / 2),
-							new Vector3(-x/2, 0, -z/2),
+							new Vector3(-x, 0, -z),
+							new Vector3(x, 0, -z),
+							new Vector3(x, 0, z),
+							new Vector3(-x, 0, z),
+							new Vector3(-x, 0, -z),
 						]
-						const border = MeshBuilder.CreateLines(`${c}`, {points: points})
+						const border = MeshBuilder.CreateLines(`${c}`, {points: points}, )
 						border.material = new StandardMaterial("borderMaterial")
 					}
 				}
