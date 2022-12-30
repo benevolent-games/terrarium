@@ -128,45 +128,41 @@ export function makeActuator({
 			const stopwatchForGround = stopwatch("ground")
 
 			let prev = <QuadNode[]>[]
+			const boundary = new Node({x:0, y:0, w:800, h:800, center: [0, 0]})
 
-			// theater.renderLoop.add(() => {
-			// 	const {x, z} = camera.position
-			// 	const boundary = new Node({x:0, y:0, w:200, h:200, center: [0, 0]})
+			const q = new Quadtree(boundary.boundary, 10)
 
-			// 	const q = new Quadtree(boundary.boundary, 10)
-			// 	q.insert([x, z])
-			// 	const c = q.getChildren()
-			// 	// debugger
-			// 	// const r = new Quadtree(boundary.boundary, 1000)
-			// 	// r.insert([1000, 10])
-			// 	// const b = r.getChildren()
+			theater.renderLoop.add(() => {
+				const {x, z} = camera.position
+				q.insert([x, z])
+				const c = q.getChildren()
 
-			// 	const xc = computeDiff(prev, c)
-			// 	if(xc) {
-			// 		for (const c in xc) {
-			// 			const node = xc[c]
-			// 			const {x, y, w, h} = node.boundary
+				const xc = computeDiff(prev, c)
+				if(xc) {
+					for (const c in xc) {
+						const node = xc[c]
+						const {x, y, w, h} = node.boundary
 
-			// 			const ground = MeshBuilder.CreateGround(`${c}`, {width: w, height: h})
-			// 			ground.position.x = x
-			// 			ground.position.y = y
+						const ground = MeshBuilder.CreateGround(`${c}`, {width: w, height: h})
+						ground.position.x = x
+						ground.position.y = y
 
-			// 		}
-			// 	}
-			// 	prev = c
-			// })
-
-
-			await makeGround({
-				theater,
-				mapSize,
-				resolution: 512,
-				terrainGenerator: oracle,
-				cliffSlopeFactor,
-				normalStrength: 1,
-				// groundShaderUrl: "/assets/shader10.json",
-				groundShaderUrl: "https://dl.dropbox.com/s/gp5yabh4zjpi7iz/terrain-shader-10.json",
+					}
+				}
+				prev = c
 			})
+
+
+			// await makeGround({
+			// 	theater,
+			// 	mapSize,
+			// 	resolution: 512,
+			// 	terrainGenerator: oracle,
+			// 	cliffSlopeFactor,
+			// 	normalStrength: 1,
+			// 	groundShaderUrl: "/assets/shader10.json",
+			// 	// groundShaderUrl: "https://dl.dropbox.com/s/gp5yabh4zjpi7iz/terrain-shader-10.json",
+			// })
 
 			stopwatchForGround.log()
 

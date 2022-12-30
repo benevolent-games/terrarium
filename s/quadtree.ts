@@ -121,7 +121,7 @@ function makeKey(node: Node) {
 }
 
 export function computeDiff(prevLayout: QuadNode[], newLayout: QuadNode[]) {
-	// debugger
+
 	const layoutIsThesame = prevLayout.join() === newLayout.join()
 	if(layoutIsThesame) return undefined
 	const prevDict: {[key: string]: QuadNode} = {}
