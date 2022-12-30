@@ -25,6 +25,7 @@ import {SceneInstrumentation} from "@babylonjs/core/Instrumentation/sceneInstrum
 import {computeDiff, Node, QuadNode, Quadtree} from "../quadtree.js"
 import {Vector3} from "@babylonjs/core/Maths/math.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
+import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 
 export function makeActuator({
 		oracle
@@ -128,33 +129,43 @@ export function makeActuator({
 			const stopwatchForGround = stopwatch("ground")
 
 			let prev = <QuadNode[]>[]
+			const boundary = new Node({x:0, z: 0, y:0, w:200, h:200, center: [0, 0]})
+			const q = new Quadtree(boundary.boundary, 10)
+			theater.renderLoop.add(() => {
+				const {x, z} = camera.position
 
-			// theater.renderLoop.add(() => {
-			// 	const {x, z} = camera.position
-			// 	const boundary = new Node({x:0, y:0, w:200, h:200, center: [0, 0]})
+				
+				console.log(q)
+				q.insert([x, z])
+				const c = q.getChildren()
+				// debugger
+				// const r = new Quadtree(boundary.boundary, 1000)
+				// r.insert([1000, 10])
+				// const b = r.getChildren()
 
-			// 	const q = new Quadtree(boundary.boundary, 10)
-			// 	q.insert([x, z])
-			// 	const c = q.getChildren()
-			// 	// debugger
-			// 	// const r = new Quadtree(boundary.boundary, 1000)
-			// 	// r.insert([1000, 10])
-			// 	// const b = r.getChildren()
+				const xc = computeDiff(prev, c)
+				if(xc) {
+					for (const c in xc) {
+						const node = xc[c]
+						const {x, y, z, w, h} = node.boundary
 
-			// 	const xc = computeDiff(prev, c)
-			// 	if(xc) {
-			// 		for (const c in xc) {
-			// 			const node = xc[c]
-			// 			const {x, y, w, h} = node.boundary
-
-			// 			const ground = MeshBuilder.CreateGround(`${c}`, {width: w, height: h})
-			// 			ground.position.x = x
-			// 			ground.position.y = y
-
-			// 		}
-			// 	}
-			// 	prev = c
-			// })
+						// const ground = MeshBuilder.CreateGround(`${c}`, {width: w, height: h})
+						// ground.position.x = x
+						// ground.position.z = z
+						// ground.position.y = y
+						const points = [
+							new Vector3(-x / 2, 0, -z / 2),
+							new Vector3(x / 2, 0, -z / 2),
+							new Vector3(x / 2, 0, z / 2),
+							new Vector3(-x / 2, 0, z / 2),
+							new Vector3(-x/2, 0, -z/2),
+						]
+						const border = MeshBuilder.CreateLines(`${c}`, {points: points})
+						border.material = new StandardMaterial("borderMaterial")
+					}
+				}
+				prev = c
+			})
 
 
 			await makeGround({

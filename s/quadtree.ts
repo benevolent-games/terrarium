@@ -3,6 +3,7 @@ import { V2, v2 } from "./toolbox/v2.js"
 const MIN_NODE_SIZE = 3
 export type Boundary = {
 	x: number
+	z: number
 	y: number
 	w: number
 	h: number
@@ -41,31 +42,36 @@ export class Quadtree {
 	}
 
 	subdivide(node: QuadNode): QuadNode[] {
-		const {x, y, w, h} = node.boundary
+		const {x, y, w, h, z} = node.boundary
+		
 		const topRightValues = {
-			x: x+w/2,
-			y: y-h/2,
+			x: x + w / 2,
+			z: z,
+			y: 0,
 			w: w/2,
 			h: h/2,
 			center: <V2>[x+w/2,y-h/2]
 		}
 		const bottomRightValues = {
-			x: x+w/2,
-			y: y+h/2,
+			x: x,
+			z: z,
+			y: 0,
 			w: w/2,
 			h: h/2,
 			center: <V2>[x+w/2,y+h/2]
 		}
 		const bottomLeftValues = {
-			x: x-w/2,
-			y: y+h/2,
+			x: x + w / 2,
+			z: z + w / 2,
+			y: 0.00001,
 			w: w/2,
 			h: h/2,
 			center: <V2>[x-w/2,y+h/2]
 		}
 		const topLeftValues = {
-			x: x-w/2,
-			y: y-h/2,
+			x: x,
+			z: z + w / 2,
+			y: 0.00001,
 			w: w/2,
 			h: h/2,
 			center: <V2>[x-w/2,y-h/2]
