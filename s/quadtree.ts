@@ -104,18 +104,15 @@ export class Quadtree {
 			return false
 		} 
 		if (this.divided) {
-			console.log("divided")
-			let boundary;
-			this.children.map((child, i) => {
+			return this.children.find((child, i) => {
 				const point = this.contains(child.boundary,cameraPosition)
-				if (point) {
-					console.log(child.boundary, i, "index")
-					boundary = child.boundary
+				if (point && child.divided) {
+					child.getCurrentNode(cameraPosition)
+				} else if (point && !child.divided) {
+					return child
 				}
 			})
-			return boundary
-		} else return this.boundary
-		
+		} else return this
 	}
 
 	getChildren() {
