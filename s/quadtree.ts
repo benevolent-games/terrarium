@@ -1,4 +1,6 @@
+import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 import {Vector3} from "@babylonjs/core/Maths/math.js"
+import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {v3, V3} from "./toolbox/v3.js"
 
 const MIN_NODE_SIZE = 3
@@ -42,21 +44,26 @@ export class Quadtree {
 	boundary: Boundary
 	children: Quadtree[]
 	divided: boolean
+	levelOfDetail: number
 
 	constructor(
 			boundary: Boundary,
-			distanceThresholdFromMidPoint: number
+			distanceThresholdFromMidPoint: number,
+			levelOfDetail: number
 		) {
 
 		this.boundary = boundary
 		this.children = []
 		this.divided = false,
 		this.threshold = distanceThresholdFromMidPoint
+		this.levelOfDetail = levelOfDetail
 	}
 
 	subdivide(node: Quadtree): Quadtree[] {
 		const {x, y, w, h, z} = node.boundary
 		node.divided = true
+		let levelOfDetail = node.levelOfDetail
+		levelOfDetail += 1
 		const topRightValues = {
 			x: x + w / 2,
 			z: z,
@@ -94,10 +101,10 @@ export class Quadtree {
 		const bottomLeft = new Node({...bottomLeftValues})
 		const topLeft = new Node({...topLeftValues})
 
-		return [new Quadtree(topRight, 10),
-		new Quadtree(topLeft, 10),
-		new Quadtree(bottomLeft, 10),
-		new Quadtree(bottomRight, 10)]
+		return [new Quadtree(topRight, 10, levelOfDetail),
+		new Quadtree(topLeft, 10, levelOfDetail),
+		new Quadtree(bottomLeft, 10, levelOfDetail),
+		new Quadtree(bottomRight, 10, levelOfDetail)]
 	}
 	getCurrentNode(cameraPosition: Vector3) {
 		if (!this.contains(this.boundary, cameraPosition)) {
@@ -108,11 +115,14 @@ export class Quadtree {
 				const point = this.contains(child.boundary,cameraPosition)
 				if (point && child.divided) {
 					child.getCurrentNode(cameraPosition)
-				} else if (point && !child.divided) {
+				}
+				if (point && !child.divided) {
 					return child
 				}
 			})
-		} else return this
+		} else {
+			return this
+		}
 	}
 
 	getChildren() {
@@ -148,11 +158,23 @@ export class Quadtree {
 
 	_insert(child: Quadtree, camPosition: V3) {
 		const distance = v3.distance(camPosition, child.boundary.center)
-		if (distance < this.threshold && child.boundary.w > MIN_NODE_SIZE) {
+		// distance < this.threshold
+		if (child.boundary.w > MIN_NODE_SIZE && child.levelOfDetail < 4) {
 			child.children = this.subdivide(child)
 
 			for (const c of child.children) {
 				this._insert(c, camPosition)
+				console.log(c, "ch1")
+				const {x, z, y} = c.boundary
+				const points = [
+							new Vector3(-x, 0, -z),
+							new Vector3(x, 0, -z),
+							new Vector3(x, 0, z),
+							new Vector3(-x, 0, z),
+							new Vector3(-x, 0, -z),
+						]
+						const border = MeshBuilder.CreateLines(`${c}`, {points: points}, )
+						border.material = new StandardMaterial("borderMaterial")
 			}
 		}
 	}
