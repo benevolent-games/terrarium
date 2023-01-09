@@ -22,11 +22,11 @@ import {v3} from "../toolbox/v3.js"
 import {DirectionalLight} from "@babylonjs/core/Lights/directionalLight.js"
 import {EngineInstrumentation} from "@babylonjs/core/Instrumentation/engineInstrumentation.js"
 import {SceneInstrumentation} from "@babylonjs/core/Instrumentation/sceneInstrumentation.js"
-import {computeDiff, Node, QuadNode, Quadtree} from "../quadtree.js"
-import {Vector3} from "@babylonjs/core/Maths/math.js"
+import {computeDiff, Node, Quadtree} from "../quadtree.js"
+import {Color3} from "@babylonjs/core/Maths/math.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
-import {VertexBuffer} from "@babylonjs/core/Buffers/buffer.js"
+import {GroundMesh} from "@babylonjs/core/Meshes/groundMesh.js"
 
 export function makeActuator({
 		oracle
@@ -129,44 +129,60 @@ export function makeActuator({
 			stopwatchForSetups.log()
 			const stopwatchForGround = stopwatch("ground")
 
+			const addMesh = (node: Quadtree, c: string) => {
+				const {x, y, z, w} = node.boundary
+				const randomColor = new Color3(Math.random() * Math.random(), Math.random() * Math.random(), Math.random() * Math.random())
+				const material = new StandardMaterial(`${c}`)
+				const ground = MeshBuilder.CreateGround(`${node.divided}`, {width: w, height: w})
+				ground.position.x = x
+				ground.position.z = z
+				ground.position.y = y
+				material.diffuseColor = randomColor
+				material.specularColor = Color3.Black()
+				material.specularPower = 8
+				ground.material = material
+				return ground
+			}
+
+			const meshes: {
+				[key: string]: GroundMesh
+			} = {}
 			let prev = <Quadtree[]>[]
-			const boundary = new Node({x:0, z: 0, y:0, w:2000, h:200, center: [0, 0, 0]})
-			const q = new Quadtree(boundary, 10)
+			const boundary = new Node({x:0, z: 0, y:0, w: 1600, h:50, center: [0, 0, 0]})
+			const q = new Quadtree(boundary, 10, 0, undefined)
+			const parentLevelOfDetail = q.levelOfDetail
+			let currentChunk: Quadtree | undefined = undefined 
+			camera.position.y = 50
+
 			theater.renderLoop.add(() => {
 				const {x, z, y} = camera.position
-				console.log(camera.position, "camera")
-				const currentChunk = q.getCurrentNode(camera.position)
-				console.log(currentChunk, "current")
-				console.log(q)
-				q.insert([x, z, y])
-				const c = q.getChildren()
-				// debugger
-				// const r = new Quadtree(boundary.boundary, 1000)
-				// r.insert([1000, 10])
-				// const b = r.getChildren()
-
-				const xc = computeDiff(prev, c)
-				if(xc) {
-					for (const c in xc) {
-						const node = xc[c]
-						const {x, y, z, w, h} = node.boundary
-
-						// const ground = MeshBuilder.CreateGround(`${c}`, {width: w, height: h})
-						// ground.position.x = x
-						// ground.position.z = z
-						// ground.position.y = y
-						const points = [
-							new Vector3(-x, 0, -z),
-							new Vector3(x, 0, -z),
-							new Vector3(x, 0, z),
-							new Vector3(-x, 0, z),
-							new Vector3(-x, 0, -z),
-						]
-						const border = MeshBuilder.CreateLines(`${c}`, {points: points}, )
-						border.material = new StandardMaterial("borderMaterial")
+				let currentChunkChecker = q.getCurrentNode(camera.position)
+					if (currentChunkChecker) {
+						if (currentChunk != currentChunkChecker) {
+							currentChunk = currentChunkChecker
+							q.calculateLevelOfDetail({
+								cameraPosition: [x, y, z],
+								levelsOfDetail: [1600, 800, 400, 0],
+								parentLevelOfDetail
+							})
+						}
+					}
+				if (currentChunk) {
+					const nodes = q.getChildren()
+					const xc = computeDiff(prev, nodes)
+					if (xc) {
+						for (const c in xc.added) {
+							const node = xc.added[c]
+							meshes[c] = addMesh(node, c)
+						}
+						for (const c in xc.removed) {
+							if (meshes[c]) {
+								meshes[c].dispose()
+							}
+						}
+						prev = nodes
 					}
 				}
-				prev = c
 			})
 
 

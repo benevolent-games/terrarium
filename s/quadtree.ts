@@ -1,9 +1,6 @@
-import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 import {Vector3} from "@babylonjs/core/Maths/math.js"
-import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
-import {v3, V3} from "./toolbox/v3.js"
+import {V3} from "./toolbox/v3.js"
 
-const MIN_NODE_SIZE = 3
 export type Boundary = {
 	x: number
 	z: number
@@ -45,11 +42,14 @@ export class Quadtree {
 	children: Quadtree[]
 	divided: boolean
 	levelOfDetail: number
+	isLeafNode: boolean
+	parent: Quadtree | undefined
 
 	constructor(
 			boundary: Boundary,
 			distanceThresholdFromMidPoint: number,
-			levelOfDetail: number
+			levelOfDetail: number,
+			parent: Quadtree | undefined
 		) {
 
 		this.boundary = boundary
@@ -57,72 +57,70 @@ export class Quadtree {
 		this.divided = false,
 		this.threshold = distanceThresholdFromMidPoint
 		this.levelOfDetail = levelOfDetail
+		this.isLeafNode = !this.divided
+		this.parent = parent
 	}
 
-	subdivide(node: Quadtree): Quadtree[] {
+	_subdivide(node: Quadtree, parentLevelOfDetail: number): Quadtree[] {
 		const {x, y, w, h, z} = node.boundary
+		let levelOfDetail = parentLevelOfDetail
 		node.divided = true
-		let levelOfDetail = node.levelOfDetail
+		node.isLeafNode = false
 		levelOfDetail += 1
+		
 		const topRightValues = {
-			x: x + w / 2,
-			z: z,
-			y: 0.1,
+			x: x + w / 4,
+			z: z - w / 4,
+			y: y,
 			w: w / 2,
 			h: h / 2,
-			center: <V3>[(x + w / 2) / 2, y - h / 4, z - w / 4]
+			center: <V3>[x + w / 2, y - h / 4, z]
 		}
 		const bottomRightValues = {
-			x: x,
-			z: z,
-			y: 0.1,
+			x: x + w / 4,
+			z: z + w / 4,
+			y: y,
 			w: w / 2,
 			h: h / 2,
-			center: <V3>[(x - w / 2) / 2, y + h / 4, z - w / 4]
+			center: <V3>[x + w / 2, y + h / 4, z + w / 2]
 		}
 		const bottomLeftValues = {
-			x: x + w / 2,
-			z: z + w / 2,
-			y: 0.00001,
+			x: x - w / 4,
+			z: z + w / 4,
+			y: y,
 			w: w / 2,
 			h: h / 2,
-			center: <V3>[(x + w / 2) / 2, y + h / 4, z + w / 4]
+			center: <V3>[x, y + h / 4, z + w / 2]
 		}
 		const topLeftValues = {
-			x: x,
-			z: z + w / 2,
-			y: 0.00001,
+			x: x - w / 4,
+			z: z - w / 4,
+			y: y,
 			w: w / 2,
 			h: h / 2,
-			center: <V3>[(x - w / 2) / 2, y - h / 4, z + w / 4]
+			center: <V3>[x, y - h / 4, z]
 		}
 		const topRight = new Node({...topRightValues})
 		const bottomRight = new Node({...bottomRightValues})
 		const bottomLeft = new Node({...bottomLeftValues})
 		const topLeft = new Node({...topLeftValues})
 
-		return [new Quadtree(topRight, 10, levelOfDetail),
-		new Quadtree(topLeft, 10, levelOfDetail),
-		new Quadtree(bottomLeft, 10, levelOfDetail),
-		new Quadtree(bottomRight, 10, levelOfDetail)]
+		return [new Quadtree(topRight, 10, levelOfDetail, node),
+		new Quadtree(topLeft, 10, levelOfDetail, node),
+		new Quadtree(bottomLeft, 10, levelOfDetail, node),
+		new Quadtree(bottomRight, 10, levelOfDetail, node)]
 	}
-	getCurrentNode(cameraPosition: Vector3) {
-		if (!this.contains(this.boundary, cameraPosition)) {
-			return false
-		} 
-		if (this.divided) {
-			return this.children.find((child, i) => {
-				const point = this.contains(child.boundary,cameraPosition)
-				if (point && child.divided) {
-					child.getCurrentNode(cameraPosition)
+
+	getCurrentNode(cameraPosition: Vector3): Quadtree | undefined {
+		if (this.contains(this.boundary, cameraPosition)) {
+			for (const child of this.children) {
+				const current = child.getCurrentNode(cameraPosition)
+				if (current) {
+					return current
 				}
-				if (point && !child.divided) {
-					return child
-				}
-			})
-		} else {
+			}
 			return this
-		}
+		} else return undefined
 	}
 
 	getChildren() {
@@ -130,18 +128,47 @@ export class Quadtree {
 		this._getChildren(this, leafNodes)
 		return leafNodes
 	}
+
 	contains(boundary: Boundary, cords: Vector3) {
 		if (boundary) {
-			const {w, center} = boundary
-		return (
-			cords.x >= center[0] - w / 2 &&
-			cords.x <= center[0] + w / 2 &&
-			cords.z >= center[2] - w / 2 &&
-			cords.z <= center[2] + w / 2
-		)
+			const {w, x, z} = boundary
+			return (
+			cords.x >= x - w / 2 &&
+			cords.x <= x + w / 2 &&
+			cords.z >= z - w / 2 &&
+			cords.z <= z + w / 2)
+		
 		} else return false
 		
 	}
+
+	calculateLevelOfDetail<T, N extends number>({cameraPosition, levelsOfDetail, parentLevelOfDetail}: {
+		cameraPosition: V3,
+		levelsOfDetail: Array<number>,
+		parentLevelOfDetail: number
+	}) {
+		if (this.isLeafNode) {
+			const camPos = new Vector3(cameraPosition[0], cameraPosition[1], cameraPosition[2])
+			const chunkCenter = new Vector3(this.boundary.x, 0, this.boundary.z)
+			const distance = Vector3.Distance(camPos, chunkCenter)
+			for (let i = 0; i < levelsOfDetail.length; i++) {
+				if (this.levelOfDetail == i) {
+					if (distance > levelsOfDetail[i - 1]) {
+						this.undivide()
+					}
+					else if (distance <= levelsOfDetail[i]) {
+						this.subdivide(parentLevelOfDetail)
+					}
+				}
+			}
+		} else {
+			for (const c of this.children) {
+				const parentLevelOfDetail = this.levelOfDetail
+				c.calculateLevelOfDetail({cameraPosition, levelsOfDetail, parentLevelOfDetail})
+			}
+		}
+	}
+
 	_getChildren(node: Quadtree, target: Quadtree[]) {
 		if (node.children.length === 0) {
 			target.push(node)
@@ -152,41 +179,23 @@ export class Quadtree {
 		}
 	}
 
-	insert(camPosition: V3) {
-		this._insert(this, camPosition)
+	subdivide(parentLevelOfDetail: number) {
+		this.children = this._subdivide(this, parentLevelOfDetail)
 	}
 
-	_insert(child: Quadtree, camPosition: V3) {
-		const distance = v3.distance(camPosition, child.boundary.center)
-		// distance < this.threshold
-		if (child.boundary.w > MIN_NODE_SIZE && child.levelOfDetail < 4) {
-			child.children = this.subdivide(child)
-
-			for (const c of child.children) {
-				this._insert(c, camPosition)
-				console.log(c, "ch1")
-				const {x, z, y} = c.boundary
-				const points = [
-							new Vector3(-x, 0, -z),
-							new Vector3(x, 0, -z),
-							new Vector3(x, 0, z),
-							new Vector3(-x, 0, z),
-							new Vector3(-x, 0, -z),
-						]
-						const border = MeshBuilder.CreateLines(`${c}`, {points: points}, )
-						border.material = new StandardMaterial("borderMaterial")
-			}
-		}
+	undivide() {
+		this.parent!.children = []
+		this.parent!.divided = false
+		this.parent!.isLeafNode = true
 	}
 }
 
 function makeKey(node: Quadtree) {
-	const {x, y} = node.boundary
-	return `${x}_${y}`
+	const {x, y, z} = node.boundary
+	return `${x}_${y}_${z}`
 }
 
 export function computeDiff(prevLayout: Quadtree[], newLayout: Quadtree[]) {
-	// debugger
 	const layoutIsThesame = prevLayout.join() === newLayout.join()
 	if(layoutIsThesame) return undefined
 	const prevDict: {[key: string]: Quadtree} = {}
@@ -204,10 +213,17 @@ export function computeDiff(prevLayout: Quadtree[], newLayout: Quadtree[]) {
 }
 
 function dictDifference<X extends {}>(prevDict: X, newDict: X) {
-	const diff = <X>{}
+	const added = <X>{}
+	const removed = <X>{}
+	
 	for (const key in newDict) {
-		if(key in prevDict)
-			diff[key] = prevDict[key]
+		if(!(key in prevDict))
+			added[key] = newDict[key]
 	}
-	return diff
+	for (const key in prevDict) {
+		if(!(key in newDict))
+			removed[key] = newDict[key]
+	}
+
+	return {added, removed}
 }
