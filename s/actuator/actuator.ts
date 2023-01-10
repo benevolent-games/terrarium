@@ -172,7 +172,8 @@ export function makeActuator({
 					const xc = computeDiff(prev, nodes)
 					if (xc) {
 						for (const c in xc.added) {
-							const node = xc.added[c]
+							const nodeHackTs = xc.added as {[key: string]: Quadtree}
+							const node = nodeHackTs[c]
 							meshes[c] = addMesh(node, c)
 						}
 						for (const c in xc.removed) {
