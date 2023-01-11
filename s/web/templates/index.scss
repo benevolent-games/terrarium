@@ -1,0 +1,41 @@
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+	background: #071925;
+	color: white;
+}
+
+body {
+	max-width: 45rem;
+	padding-top: 2rem;
+	margin: 0 auto;
+}
+
+h1 {
+	text-align: center;
+	margin-bottom: 1em;
+}
+
+canvas {
+	width: 100%;
+	aspect-ratio: 16/9;
+}
+
+.framerate {
+	position: fixed;
+	color: whitesmoke;
+	font-size: 2rem;
+	top: 0;
+	right: 10px;
+	opacity: .7;
+	text-shadow: -2px 2px 3px black;
+}
+
+.counter {
+	opacity: 0.6;
+}
