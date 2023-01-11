@@ -1,6 +1,12 @@
 
 import {html} from "xiome/x/toolbox/hamster-html/html.js"
+import {WebsiteContext} from "xiome/x/toolbox/hamster-html/website/build-website-types.js"
 
-export default () => html`
-	<h1>terraruim</h1>
-`
+import pageHtml from "../partials/page.html.js"
+
+export default (context: WebsiteContext) => pageHtml({
+	...context,
+	mainContent: html`
+		<h1>⛰️ terrarium</h1>
+	`,
+})
