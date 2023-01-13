@@ -27,6 +27,7 @@ import {Color3} from "@babylonjs/core/Maths/math.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 import {GroundMesh} from "@babylonjs/core/Meshes/groundMesh.js"
+import {makeCamPosDisplay} from "../toolbox/make-cam-pos-display.js"
 
 export function makeActuator({
 		oracle
@@ -36,10 +37,19 @@ export function makeActuator({
 
 	const settings = makeSettings()
 	const theater = makeTheater()
+	const {camera, updateTargetHeight, smoothUpdateForCameraHeight} = makeSpectatorCamera({
+		theater,
+		sampleHeight: oracle.sampleHeight
+	})
 	const frameRateDisplay = makeFramerateDisplay({
 		getFramerate() {
 			return theater.engine.getFps()
 		},
+	})
+	const cameraPosDisplay = makeCamPosDisplay({
+		getCameraPos() {
+			return camera.position
+		}
 	})
 
 	const engineInstrumentation = new EngineInstrumentation(theater.engine)
@@ -103,17 +113,13 @@ export function makeActuator({
 		cameraRenderTimeCounter,
 		activeMeshesEvaluationTimeCounter,
 		frameRateDisplay,
+		cameraPosDisplay,
 		async initialize() {
 			const stopwatchForSetups = stopwatch("setups")
 
 			const mapSize = 50
 			const cliffSlopeFactor = 0
 			const randomly = makeRandomToolkit()
-
-			const {camera, updateTargetHeight, smoothUpdateForCameraHeight} = makeSpectatorCamera({
-				theater,
-				sampleHeight: oracle.sampleHeight
-			})
 
 			let gravityEnabled = settings.readable.enableGravityAndCollisions
 

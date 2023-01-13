@@ -35,6 +35,13 @@ canvas {
 	text-shadow: -2px 2px 3px black;
 }
 
+.camera-pos {
+	position: fixed;
+	display: block;
+	top: 0;
+	left: 0;
+}
+
 .counter {
 	opacity: 0.6;
 }
