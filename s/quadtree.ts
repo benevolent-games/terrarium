@@ -1,5 +1,5 @@
 import {Vector3} from "@babylonjs/core/Maths/math.js"
-import {V3} from "./toolbox/v3.js"
+import {v3, V3} from "./toolbox/v3.js"
 
 export type Boundary = {
 	x: number
@@ -48,25 +48,27 @@ export class Quadtree {
 	constructor(
 			boundary: Boundary,
 			distanceThresholdFromMidPoint: number,
-			levelOfDetail: number,
 			parent: Quadtree | undefined
 		) {
-
 		this.boundary = boundary
 		this.children = []
 		this.divided = false,
 		this.threshold = distanceThresholdFromMidPoint
-		this.levelOfDetail = levelOfDetail
+		this.levelOfDetail = this.getLevelOfDetail(parent)
 		this.isLeafNode = !this.divided
 		this.parent = parent
 	}
 
-	_subdivide(node: Quadtree, parentLevelOfDetail: number): Quadtree[] {
+	getLevelOfDetail(parent: Quadtree | undefined) {
+		if (parent) {
+			return parent.levelOfDetail + 1
+		} else return 0
+	}
+
+	_subdivide(node: Quadtree): Quadtree[] {
 		const {x, y, w, h, z} = node.boundary
-		let levelOfDetail = parentLevelOfDetail
 		node.divided = true
 		node.isLeafNode = false
-		levelOfDetail += 1
 		
 		const topRightValues = {
 			x: x + w / 4,
@@ -105,10 +107,10 @@ export class Quadtree {
 		const bottomLeft = new Node({...bottomLeftValues})
 		const topLeft = new Node({...topLeftValues})
 
-		return [new Quadtree(topRight, 10, levelOfDetail, node),
-		new Quadtree(topLeft, 10, levelOfDetail, node),
-		new Quadtree(bottomLeft, 10, levelOfDetail, node),
-		new Quadtree(bottomRight, 10, levelOfDetail, node)]
+		return [new Quadtree(topRight, 10, node),
+		new Quadtree(topLeft, 10, node),
+		new Quadtree(bottomLeft, 10, node),
+		new Quadtree(bottomRight, 10, node)]
 	}
 
 	getCurrentNode(cameraPosition: Vector3): Quadtree | undefined {
@@ -142,29 +144,26 @@ export class Quadtree {
 		
 	}
 
-	calculateLevelOfDetail<T, N extends number>({cameraPosition, levelsOfDetail, parentLevelOfDetail}: {
+	calculateLevelOfDetail<T, N extends number>({cameraPosition, levelsOfDetail}: {
 		cameraPosition: V3,
 		levelsOfDetail: Array<number>,
-		parentLevelOfDetail: number
 	}) {
 		if (this.isLeafNode) {
-			const camPos = new Vector3(cameraPosition[0], cameraPosition[1], cameraPosition[2])
-			const chunkCenter = new Vector3(this.boundary.x, 0, this.boundary.z)
-			const distance = Vector3.Distance(camPos, chunkCenter)
+			const distanceToLeafNode = v3.distance(cameraPosition, [this.boundary.x, 0, this.boundary.z])
+			const distanceToParent = this.parent ? v3.distance(cameraPosition, [this.parent?.boundary.x, 0, this.parent?.boundary.z]) : undefined
 			for (let i = 0; i < levelsOfDetail.length; i++) {
 				if (this.levelOfDetail == i) {
-					if (distance > levelsOfDetail[i - 1]) {
-						this.undivide()
+					if (distanceToLeafNode < levelsOfDetail[i]) {
+						this.subdivide()
 					}
-					else if (distance <= levelsOfDetail[i]) {
-						this.subdivide(parentLevelOfDetail)
+					else if (distanceToParent && distanceToParent > levelsOfDetail[i - 1]) {
+						this.undivide()
 					}
 				}
 			}
 		} else {
 			for (const c of this.children) {
-				const parentLevelOfDetail = this.levelOfDetail
-				c.calculateLevelOfDetail({cameraPosition, levelsOfDetail, parentLevelOfDetail})
+				c.calculateLevelOfDetail({cameraPosition, levelsOfDetail})
 			}
 		}
 	}
@@ -179,8 +178,8 @@ export class Quadtree {
 		}
 	}
 
-	subdivide(parentLevelOfDetail: number) {
-		this.children = this._subdivide(this, parentLevelOfDetail)
+	subdivide() {
+		this.children = this._subdivide(this)
 	}
 
 	undivide() {

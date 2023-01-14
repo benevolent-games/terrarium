@@ -155,8 +155,7 @@ export function makeActuator({
 			} = {}
 			let prev = <Quadtree[]>[]
 			const boundary = new Node({x:0, z: 0, y:0, w: 1600, h:50, center: [0, 0, 0]})
-			const q = new Quadtree(boundary, 10, 0, undefined)
-			const parentLevelOfDetail = q.levelOfDetail
+			const q = new Quadtree(boundary, 10, undefined)
 			let currentChunk: Quadtree | undefined = undefined 
 			camera.position.y = 50
 
@@ -167,9 +166,8 @@ export function makeActuator({
 						if (currentChunk != currentChunkChecker) {
 							currentChunk = currentChunkChecker
 							q.calculateLevelOfDetail({
-								cameraPosition: [x, y, z],
-								levelsOfDetail: [1600, 800, 400, 0],
-								parentLevelOfDetail
+								cameraPosition: [x, 0, z],
+								levelsOfDetail: [1800, 1000, 600, 400, 300 ,0], // works best if each level is divided by 2 plus like 10% of parent width
 							})
 						}
 					}
