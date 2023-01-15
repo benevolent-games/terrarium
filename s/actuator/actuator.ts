@@ -135,23 +135,28 @@ export function makeActuator({
 			stopwatchForSetups.log()
 			const stopwatchForGround = stopwatch("ground")
 
-			const addMesh = (node: Quadtree, c: string) => {
-				const {x, y, z, w} = node.boundary
-				const randomColor = new Color3(Math.random() * Math.random(), Math.random() * Math.random(), Math.random() * Math.random())
-				const material = new StandardMaterial(`${c}`)
-				const ground = MeshBuilder.CreateGround(`${node.divided}`, {width: w, height: w})
-				ground.position.x = x
-				ground.position.z = z
-				ground.position.y = y
-				material.diffuseColor = randomColor
-				material.specularColor = Color3.Black()
-				material.specularPower = 8
-				ground.material = material
-				return ground
+		const addMesh = async (node: Quadtree, c: string) => {
+			const {x, y, z, w} = node.boundary
+			return await makeGround({
+					theater,
+					mapSize: w,
+					resolution: 30,
+					terrainGenerator: oracle,
+					cliffSlopeFactor,
+					normalStrength: 1,
+					// groundShaderUrl: "/assets/shader10.json",
+					groundShaderUrl: "https://dl.dropbox.com/s/gp5yabh4zjpi7iz/terrain-shader-10.json",
+					position: {
+						x: x,
+						z: z,
+						y: y
+					},
+					c,
+				})
 			}
 
 			const meshes: {
-				[key: string]: GroundMesh
+				[key: string]: Promise<GroundMesh>
 			} = {}
 			let prev = <Quadtree[]>[]
 			const boundary = new Node({x:0, z: 0, y:0, w: 1600, h:50, center: [0, 0, 0]})
@@ -159,7 +164,7 @@ export function makeActuator({
 			let currentChunk: Quadtree | undefined = undefined 
 			camera.position.y = 50
 
-			theater.renderLoop.add(() => {
+			theater.renderLoop.add(async () => {
 				const {x, z, y} = camera.position
 				let currentChunkChecker = q.getCurrentNode(camera.position)
 					if (currentChunkChecker) {
@@ -167,7 +172,7 @@ export function makeActuator({
 							currentChunk = currentChunkChecker
 							q.calculateLevelOfDetail({
 								cameraPosition: [x, 0, z],
-								levelsOfDetail: [1800, 1000, 600, 400, 300 ,0], // works best if each level is divided by 2 plus like 10% of parent width
+								levelsOfDetail: [1800, 1000, 600, 400, 300, 0], // works best if each level is divided by 2 plus like 10% of parent width
 							})
 						}
 					}
@@ -180,27 +185,25 @@ export function makeActuator({
 							const node = nodeHackTs[c]
 							meshes[c] = addMesh(node, c)
 						}
-						for (const c in xc.removed) {
-							if (meshes[c]) {
-								meshes[c].dispose()
-							}
-						}
 						prev = nodes
+						for (const c in xc.removed) {
+							(await meshes[c]).dispose()
+						}
 					}
 				}
 			})
 
 
-			await makeGround({
-				theater,
-				mapSize,
-				resolution: 512,
-				terrainGenerator: oracle,
-				cliffSlopeFactor,
-				normalStrength: 1,
-				// groundShaderUrl: "/assets/shader10.json",
-				groundShaderUrl: "https://dl.dropbox.com/s/gp5yabh4zjpi7iz/terrain-shader-10.json",
-			})
+			// await makeGround({
+			// 	theater,
+			// 	mapSize,
+			// 	resolution: 512,
+			// 	terrainGenerator: oracle,
+			// 	cliffSlopeFactor,
+			// 	normalStrength: 1,
+			// 	// groundShaderUrl: "/assets/shader10.json",
+			// 	groundShaderUrl: "https://dl.dropbox.com/s/gp5yabh4zjpi7iz/terrain-shader-10.json",
+			// })
 
 			stopwatchForGround.log()
 

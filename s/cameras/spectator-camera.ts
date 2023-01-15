@@ -7,7 +7,7 @@ export function makeSpectatorCamera({
 		theater, sampleHeight
 	}: {
 		theater: Theater
-		sampleHeight: (x: number, y: number) => number
+		sampleHeight: (x: number, y: number, z: number) => number
 	}) {
 
 	const camera = (() => {
@@ -34,6 +34,7 @@ export function makeSpectatorCamera({
 		if(!gravityEnabled) return
 		targetHeight = sampleHeight(
 			camera.globalPosition.x,
+			camera.globalPosition.y,
 			camera.globalPosition.z,
 		)
 	}
@@ -46,6 +47,7 @@ export function makeSpectatorCamera({
 		camera.position.y += fractionOfDifference
 		const floor = sampleHeight(
 			camera.globalPosition.x,
+			camera.globalPosition.y,
 			camera.globalPosition.z,
 		) + minimumHeightOffGround
 		if (camera.globalPosition.y < floor) {
