@@ -187,6 +187,7 @@ export function makeActuator({
 						}
 						prev = nodes
 						for (const c in xc.removed) {
+							if(await meshes[c])
 							(await meshes[c]).dispose()
 						}
 					}
