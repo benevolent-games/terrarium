@@ -159,25 +159,21 @@ export function makeActuator({
 				[key: string]: Promise<GroundMesh>
 			} = {}
 			let prev = <Quadtree[]>[]
-			const boundary = new Node({x:0, z: 0, y:0, w: 1600, h:50, center: [0, 0, 0]})
-			const q = new Quadtree(boundary, 10, undefined)
-			let currentChunk: Quadtree | undefined = undefined 
+			const boundary = new Node({x:0, z: 0, y:0, w: 3200, h:50, center: [0, 0, 0]})
+			const qt = new Quadtree(boundary, 10, undefined)
 			camera.position.y = 50
 
 			theater.renderLoop.add(async () => {
 				const {x, z, y} = camera.position
-				let currentChunkChecker = q.getCurrentNode(camera.position)
-					if (currentChunkChecker) {
-						if (currentChunk != currentChunkChecker) {
-							currentChunk = currentChunkChecker
-							q.calculateLevelOfDetail({
-								cameraPosition: [x, 0, z],
-								levelsOfDetail: [1800, 1000, 600, 400, 300, 0], // works best if each level is divided by 2 plus like 10% of parent width
-							})
-						}
-					}
-				if (currentChunk) {
-					const nodes = q.getChildren()
+
+					qt.calculateLevelOfDetail({
+						cameraPosition: [x, 0, z],
+						levelsOfDetail: [3600, 2000, 1200, 800, 600, 0], // works best if each level is divided by 2 plus like 10% of parent width,
+						qt,
+						maxNumberOfCalculationsPerFrame: 30,
+					}).process()
+
+					const nodes = qt.getChildren()
 					const xc = computeDiff(prev, nodes)
 					if (xc) {
 						for (const c in xc.added) {
@@ -191,7 +187,6 @@ export function makeActuator({
 							(await meshes[c]).dispose()
 						}
 					}
-				}
 			})
 
 

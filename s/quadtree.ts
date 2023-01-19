@@ -44,6 +44,9 @@ export class Quadtree {
 	levelOfDetail: number
 	isLeafNode: boolean
 	parent: Quadtree | undefined
+	workQueue: Array<Function>
+	numberOfCalculationsDone: number
+	currentChunk: Quadtree | undefined
 
 	constructor(
 			boundary: Boundary,
@@ -57,6 +60,9 @@ export class Quadtree {
 		this.levelOfDetail = this.getLevelOfDetail(parent)
 		this.isLeafNode = !this.divided
 		this.parent = parent
+		this.workQueue = []
+		this.numberOfCalculationsDone = 0
+		this.currentChunk = undefined
 	}
 
 	getLevelOfDetail(parent: Quadtree | undefined) {
@@ -144,26 +150,40 @@ export class Quadtree {
 		
 	}
 
-	calculateLevelOfDetail<T, N extends number>({cameraPosition, levelsOfDetail}: {
+	calculateLevelOfDetail<T, N extends number>({cameraPosition, levelsOfDetail, qt, maxNumberOfCalculationsPerFrame = 30}: {
 		cameraPosition: V3,
 		levelsOfDetail: Array<number>,
+		qt: Quadtree
+		maxNumberOfCalculationsPerFrame?: number
 	}) {
-		if (this.isLeafNode) {
-			const distanceToLeafNode = v3.distance(cameraPosition, [this.boundary.x, 0, this.boundary.z])
-			const distanceToParent = this.parent ? v3.distance(cameraPosition, [this.parent?.boundary.x, 0, this.parent?.boundary.z]) : undefined
-			for (let i = 0; i < levelsOfDetail.length; i++) {
-				if (this.levelOfDetail == i) {
-					if (distanceToLeafNode < levelsOfDetail[i]) {
-						this.subdivide()
+		let currentChunkChecker = qt.getCurrentNode(new Vector3(cameraPosition[0], cameraPosition[1], cameraPosition[2]))
+		if (currentChunkChecker) {
+			if (qt.currentChunk != currentChunkChecker) {
+				if (this.isLeafNode) {
+					const distanceToLeafNode = v3.distance(cameraPosition, [this.boundary.x, 0, this.boundary.z])
+					const distanceToParent = this.parent ? v3.distance(cameraPosition, [this.parent?.boundary.x, 0, this.parent?.boundary.z]) : undefined
+					for (let i = 0; i < levelsOfDetail.length; i++) {
+						if (this.levelOfDetail == i) {
+							if (distanceToLeafNode < levelsOfDetail[i]) {
+								qt.workQueue.push(() => this.subdivide())
+							}
+							else if (distanceToParent && distanceToParent > levelsOfDetail[i - 1]) {
+								qt.workQueue.push(() => this.undivide())
+							}
+						}
 					}
-					else if (distanceToParent && distanceToParent > levelsOfDetail[i - 1]) {
-						this.undivide()
+				} else {
+					for (const c of this.children) {
+						c.calculateLevelOfDetail({cameraPosition, levelsOfDetail, qt})
 					}
 				}
 			}
-		} else {
-			for (const c of this.children) {
-				c.calculateLevelOfDetail({cameraPosition, levelsOfDetail})
+		}
+		return {
+			process: () => {
+				qt.currentChunk = currentChunkChecker
+				qt.processQueue(qt.workQueue, qt, maxNumberOfCalculationsPerFrame)
+				qt.numberOfCalculationsDone = 0
 			}
 		}
 	}
@@ -186,6 +206,14 @@ export class Quadtree {
 		this.parent!.children = []
 		this.parent!.divided = false
 		this.parent!.isLeafNode = true
+	}
+
+	processQueue(workQueue: Array<Function>, qt: Quadtree, maxCalculations: number) {
+		while (workQueue.length && qt.numberOfCalculationsDone < maxCalculations) {
+			let calculate = workQueue.shift() as Function
+			calculate()
+			qt.numberOfCalculationsDone++
+		}
 	}
 }
 
