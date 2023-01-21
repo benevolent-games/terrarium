@@ -1,7 +1,18 @@
 
 import {makeTerrarium} from "./main.js"
+import {getElements, registerElements} from "@benev/toolbox"
+import {RangeSlider} from "@benev/toolbox/x/editor-ui/range-slider/element.js"
 
 const world = makeTerrarium()
+
+registerElements(getElements())
+
+// const slider = document.querySelector("range-slider")
+// console.log(slider)
+// slider?.addEventListener("value-change", (event) => {
+// 	const x = event.target as RangeSlider
+// 	console.log(x.value)
+// })
 
 document.body.appendChild(world.theater.canvas)
 document.body.appendChild(world.settings.element)
