@@ -28,6 +28,7 @@ import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 import {GroundMesh} from "@babylonjs/core/Meshes/groundMesh.js"
 import {makeCamPosDisplay} from "../toolbox/make-cam-pos-display.js"
+import {makeSlider} from "../editor-ui/make-slider.js"
 
 export function makeActuator({
 		oracle
@@ -103,7 +104,10 @@ export function makeActuator({
 	document.addEventListener("fullscreenchange", resizeAll)
 	setTimeout(resizeAll, 0)
 
+	const slider = makeSlider()
+
 	return {
+		slider,
 		theater,
 		settings,
 		gpuFrameTimeCounter,
