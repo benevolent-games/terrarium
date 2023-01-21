@@ -168,9 +168,9 @@ export function makeActuator({
 
 					qt.calculateLevelOfDetail({
 						cameraPosition: [x, y, z],
-						levelsOfDetail: [3600, 2000, 1200, 800, 600, 0], // works best if each level is divided by 2 plus like 10% of parent width,
+						levelsOfDetail: 7,
 						qt,
-						maxNumberOfCalculationsPerFrame: 30,
+						maxNumberOfCalculationsPerFrame: 40,
 					}).process()
 
 					const nodes = qt.getChildren()

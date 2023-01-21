@@ -47,6 +47,7 @@ export class Quadtree {
 	workQueue: Array<Function>
 	numberOfCalculationsDone: number
 	currentChunk: Quadtree | undefined
+	levelsOfDetail: number[] | undefined
 
 	constructor(
 			boundary: Boundary,
@@ -63,6 +64,7 @@ export class Quadtree {
 		this.workQueue = []
 		this.numberOfCalculationsDone = 0
 		this.currentChunk = undefined
+		this.levelsOfDetail = undefined
 	}
 
 	getLevelOfDetail(parent: Quadtree | undefined) {
@@ -152,22 +154,28 @@ export class Quadtree {
 
 	calculateLevelOfDetail<T, N extends number>({cameraPosition, levelsOfDetail, qt, maxNumberOfCalculationsPerFrame = 30}: {
 		cameraPosition: V3,
-		levelsOfDetail: Array<number>,
+		levelsOfDetail: number,
 		qt: Quadtree
 		maxNumberOfCalculationsPerFrame?: number
 	}) {
+		if (!qt.levelsOfDetail) {
+			qt.levelsOfDetail = generateLevelsOfDetail(levelsOfDetail, qt.boundary.w)
+		}
+		if (qt.levelsOfDetail.length != levelsOfDetail) {
+			qt.levelsOfDetail = generateLevelsOfDetail(levelsOfDetail, qt.boundary.w)
+		}
 		let currentChunkChecker = qt.getCurrentNode(new Vector3(cameraPosition[0], cameraPosition[1], cameraPosition[2]))
 		if (currentChunkChecker) {
 			if (qt.currentChunk != currentChunkChecker) {
 				if (this.isLeafNode) {
 					const distanceToLeafNode = v3.distance(cameraPosition, [this.boundary.x, 0, this.boundary.z])
 					const distanceToParent = this.parent ? v3.distance(cameraPosition, [this.parent?.boundary.x, 0, this.parent?.boundary.z]) : undefined
-					for (let i = 0; i < levelsOfDetail.length; i++) {
+					for (let i = 0; i < qt.levelsOfDetail.length; i++) {
 						if (this.levelOfDetail == i) {
-							if (distanceToLeafNode < levelsOfDetail[i]) {
+							if (distanceToLeafNode < qt.levelsOfDetail[i]) {
 								qt.workQueue.push(() => this.subdivide())
 							}
-							else if (distanceToParent && distanceToParent > levelsOfDetail[i - 1]) {
+							else if (distanceToParent && distanceToParent > qt.levelsOfDetail[i - 1]) {
 								qt.workQueue.push(() => this.undivide())
 							}
 						}
@@ -253,4 +261,17 @@ function dictDifference<X extends {}>(prevDict: X, newDict: X) {
 	}
 
 	return {added, removed}
+}
+
+export const generateLevelsOfDetail = (number: number, boundary: number) => {
+	const levels: number[] = []
+	for (let i = 0; i <= number; i++) {
+		if (i == number) {
+			levels.push(0)
+		}
+		if (i != number) {
+			levels.push((boundary / Math.pow(2, i)) + (12.5 / 100 * boundary))
+		}
+	}
+	return levels
 }
