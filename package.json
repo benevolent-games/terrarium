@@ -32,6 +32,7 @@
 	"dependencies": {
 		"@babylonjs/core": "^5.35.1",
 		"@babylonjs/loaders": "^5.35.1",
+		"@benev/nubs": "^0.0.7",
 		"@benev/toolbox": "^0.0.0-dev.3",
 		"@chasemoskal/magical": "^0.1.2",
 		"@rollup/plugin-node-resolve": "^15.0.1",

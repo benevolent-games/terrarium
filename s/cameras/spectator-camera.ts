@@ -1,31 +1,24 @@
 
 import {Theater} from "../theater/theater.js"
-import {Vector3} from "@babylonjs/core/Maths/math.vector.js"
-import {UniversalCamera} from "@babylonjs/core/Cameras/universalCamera.js"
+import {makeSpectatorCamera} from "@benev/toolbox/x/babylon/camera/spectator-camera.js"
 
-export function makeSpectatorCamera({
+export function makeCamera({
 		theater, sampleHeight
 	}: {
 		theater: Theater
 		sampleHeight: (x: number, y: number, z: number) => number
 	}) {
 
-	const camera = (() => {
-		const name = "cammm"
-		const position = new Vector3(0, 0, 0)
-		return new UniversalCamera(name, position, theater.scene)
-	})()
-
-	camera.attachControl()
-	camera.minZ = 1
-	camera.maxZ = 5000
-	camera.speed = 2
-	camera.angularSensibility = 4000
-
-	camera.keysUp.push(87)
-	camera.keysLeft.push(65)
-	camera.keysDown.push(83)
-	camera.keysRight.push(68)
+	const camera = makeSpectatorCamera({
+		walk: 0.7,
+		engine: theater.engine,
+		scene: theater.scene,
+		lookSensitivity: {
+			stick: 1/50,
+			mouse: 1/1_000
+		},
+		renderLoop: theater.renderLoop
+	})
 
 	let targetHeight = 0
 	const minimumHeightOffGround = 10
@@ -55,8 +48,6 @@ export function makeSpectatorCamera({
 			camera.position.y += underneath
 		}
 	}
-
-	
 
 	return {
 		camera,

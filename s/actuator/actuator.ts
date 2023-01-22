@@ -14,7 +14,7 @@ import {setupLighting} from "../landscape/lighting.js"
 import {makeRandomToolkit} from "../toolbox/randomly.js"
 import {sprinkleProps} from "../landscape/sprinkle-props.js"
 import {makeCounters} from "../toolbox/make-time-counter.js"
-import {makeSpectatorCamera} from "../cameras/spectator-camera.js"
+import {makeCamera} from "../cameras/spectator-camera.js"
 import {sprinkleNewProps} from "../landscape/sprinkle-new-props.js"
 import {makeFramerateDisplay} from "../toolbox/make-framerate-display.js"
 import {stopwatch} from "../toolbox/stopwatch.js"
@@ -38,7 +38,7 @@ export function makeActuator({
 
 	const settings = makeSettings()
 	const theater = makeTheater()
-	const {camera, updateTargetHeight, smoothUpdateForCameraHeight} = makeSpectatorCamera({
+	const {camera, updateTargetHeight, smoothUpdateForCameraHeight} = makeCamera({
 		theater,
 		sampleHeight: oracle.sampleHeight
 	})

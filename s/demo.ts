@@ -1,6 +1,6 @@
 
 import {makeTerrarium} from "./main.js"
-import {getElements, registerElements} from "@benev/toolbox"
+import {getElements, registerElements} from "@benev/toolbox/x/main.js"
 
 registerElements(getElements())
 const world = makeTerrarium()
