@@ -28,13 +28,20 @@ import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 import {GroundMesh} from "@babylonjs/core/Meshes/groundMesh.js"
 import {makeCamPosDisplay} from "../toolbox/make-cam-pos-display.js"
-
+import {makeSlider} from "../editor-ui/make-slider.js"
+import {RangeSlider} from "@benev/toolbox/x/editor-ui/range-slider/element.js"
 export function makeActuator({
 		oracle
 	}: {
 		oracle: Oracle
 	}) {
 
+	const slider = makeSlider()
+	let sliderValue = 5
+	slider?.addEventListener("valuechange", (event) => {
+		const x = event.target as RangeSlider
+		sliderValue = Number(x.value)
+	})
 	const settings = makeSettings()
 	const theater = makeTheater()
 	const {camera, updateTargetHeight, smoothUpdateForCameraHeight} = makeSpectatorCamera({
@@ -104,6 +111,7 @@ export function makeActuator({
 	setTimeout(resizeAll, 0)
 
 	return {
+		slider,
 		theater,
 		settings,
 		gpuFrameTimeCounter,
@@ -168,7 +176,7 @@ export function makeActuator({
 
 					qt.calculateLevelOfDetail({
 						cameraPosition: [x, y, z],
-						levelsOfDetail: 7,
+						levelsOfDetail: sliderValue,
 						qt,
 						maxNumberOfCalculationsPerFrame: 40,
 					}).process()
