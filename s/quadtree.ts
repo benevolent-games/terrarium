@@ -240,6 +240,13 @@ export class Quadtree {
 			}
 		}
 	}
+
+	changeBoundary(newBoundary: number) {
+		if (this.boundary.w != newBoundary) {
+			this.boundary.w = newBoundary
+			this.levelsOfDetail = generateLevelsOfDetail(this.levelOfDetail, this.boundary.w)
+		}
+	}
 }
 
 function makeKey(node: Quadtree) {

@@ -28,7 +28,7 @@ import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 import {GroundMesh} from "@babylonjs/core/Meshes/groundMesh.js"
 import {makeCamPosDisplay} from "../toolbox/make-cam-pos-display.js"
-import {makeSlider} from "../editor-ui/make-slider.js"
+import {makeSliders} from "../editor-ui/make-slider.js"
 import {RangeSlider} from "@benev/toolbox/x/editor-ui/range-slider/element.js"
 export function makeActuator({
 		oracle
@@ -36,12 +36,25 @@ export function makeActuator({
 		oracle: Oracle
 	}) {
 
-	const slider = makeSlider()
-	let sliderValue = 5
-	slider?.addEventListener("valuechange", (event) => {
+	let boundaryValue = 3200
+	let levelOfDetailValue = 5
+	let workloadBudgetValue = 40
+
+	const {levelOfDetailSlider, workloadBudgetSlider, boundarySlider} = makeSliders(boundaryValue, levelOfDetailValue, workloadBudgetValue)
+
+	levelOfDetailSlider.addEventListener("valuechange", (event) => {
 		const x = event.target as RangeSlider
-		sliderValue = Number(x.value)
+		levelOfDetailValue = Number(x.value)
 	})
+	workloadBudgetSlider.addEventListener("valuechange", (event) => {
+		const x = event.target as RangeSlider
+		workloadBudgetValue = Number(x.value)
+	})
+	boundarySlider.addEventListener("valuechange", (event) => {
+		const x = event.target as RangeSlider
+		boundaryValue = Number(x.value)
+	})
+
 	const settings = makeSettings()
 	const theater = makeTheater()
 	const {camera, updateTargetHeight, smoothUpdateForCameraHeight} = makeSpectatorCamera({
@@ -111,7 +124,9 @@ export function makeActuator({
 	setTimeout(resizeAll, 0)
 
 	return {
-		slider,
+		levelOfDetailSlider,
+		workloadBudgetSlider,
+		boundarySlider,
 		theater,
 		settings,
 		gpuFrameTimeCounter,
@@ -167,18 +182,18 @@ export function makeActuator({
 				[key: string]: Promise<GroundMesh>
 			} = {}
 			let prev = <Quadtree[]>[]
-			const boundary = new Node({x:0, z: 0, y:0, w: 3200, h:50, center: [0, 0, 0]})
+			const boundary = new Node({x:0, z: 0, y:0, w: boundaryValue, h:50, center: [0, 0, 0]})
 			const qt = new Quadtree(boundary, 10, undefined)
 			camera.position.y = 50
 
 			theater.renderLoop.add(async () => {
 				const {x, z, y} = camera.position
-
+				qt.changeBoundary(boundaryValue)
 					qt.calculateLevelOfDetail({
 						cameraPosition: [x, y, z],
-						levelsOfDetail: sliderValue,
+						levelsOfDetail: levelOfDetailValue,
 						qt,
-						maxNumberOfCalculationsPerFrame: 40,
+						maxNumberOfCalculationsPerFrame: workloadBudgetValue,
 					}).process()
 
 					const nodes = qt.getChildren()
