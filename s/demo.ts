@@ -12,7 +12,6 @@ const firstColumn = document.createElement("div")
 const secondColumn = document.createElement("div")
 document.body.appendChild(world.theater.canvas)
 document.body.appendChild(wrapper)
-document.body.appendChild(world.slider)
 
 wrapper.appendChild(firstColumn)
 wrapper.appendChild(secondColumn)
