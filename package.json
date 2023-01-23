@@ -30,18 +30,13 @@
 		"test": "exit 0"
 	},
 	"dependencies": {
-		"@babylonjs/core": "^5.35.1",
-		"@babylonjs/loaders": "^5.35.1",
+		"@babylonjs/core": "^5.43.1",
+		"@babylonjs/loaders": "^5.43.1",
 		"@benev/nubs": "^0.0.7",
-		"@benev/toolbox": "^0.0.0-dev.3",
-		"@chasemoskal/magical": "^0.1.2",
-		"@rollup/plugin-node-resolve": "^15.0.1",
+		"@benev/toolbox": "^0.0.0-dev.4",
 		"es-module-shims": "^1.6.3",
-		"glob": "^8.1.0",
-		"rollup": "^3.10.1",
 		"simplex-noise": "^4.0.1",
-		"terser": "^5.16.1",
-		"xiome": "^0.0.37"
+		"xiome": "^0.0.40"
 	},
 	"devDependencies": {
 		"chokidar": "^3.5.3",
