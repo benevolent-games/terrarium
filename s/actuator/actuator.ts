@@ -29,7 +29,6 @@ import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 import {GroundMesh} from "@babylonjs/core/Meshes/groundMesh.js"
 import {makeCamPosDisplay} from "../toolbox/make-cam-pos-display.js"
 import {makeSliders} from "../editor-ui/make-slider.js"
-import {RangeSlider} from "@benev/toolbox/x/editor-ui/range-slider/element.js"
 
 export function makeActuator({
 		oracle
@@ -37,25 +36,7 @@ export function makeActuator({
 		oracle: Oracle
 	}) {
 
-	let boundaryValue = 3200
-	let levelOfDetailValue = 5
-	let workloadBudgetValue = 40
-
-	const {levelOfDetailSlider, workloadBudgetSlider, boundarySlider} = makeSliders(boundaryValue, levelOfDetailValue, workloadBudgetValue)
-
-	levelOfDetailSlider.addEventListener("valuechange", (event) => {
-		const x = event.target as RangeSlider
-		levelOfDetailValue = Number(x.value)
-	})
-	workloadBudgetSlider.addEventListener("valuechange", (event) => {
-		const x = event.target as RangeSlider
-		workloadBudgetValue = Number(x.value)
-	})
-	boundarySlider.addEventListener("valuechange", (event) => {
-		const x = event.target as RangeSlider
-		boundaryValue = Number(x.value)
-	})
-
+	const {state, sliders} = makeSliders()
 	const settings = makeSettings()
 	const theater = makeTheater()
 	const {camera, updateTargetHeight, smoothUpdateForCameraHeight} = makeCamera({
@@ -125,9 +106,7 @@ export function makeActuator({
 	setTimeout(resizeAll, 0)
 
 	return {
-		levelOfDetailSlider,
-		workloadBudgetSlider,
-		boundarySlider,
+		...sliders,
 		theater,
 		settings,
 		gpuFrameTimeCounter,
@@ -183,18 +162,18 @@ export function makeActuator({
 				[key: string]: Promise<GroundMesh>
 			} = {}
 			let prev = <Quadtree[]>[]
-			const boundary = new Node({x:0, z: 0, y:0, w: boundaryValue, h:50, center: [0, 0, 0]})
+			const boundary = new Node({x:0, z: 0, y:0, w: state.boundary, h:50, center: [0, 0, 0]})
 			const qt = new Quadtree(boundary, 10, undefined)
 			camera.position.y = 50
 
 			theater.renderLoop.add(async () => {
 				const {x, z, y} = camera.position
-				qt.changeBoundary(boundaryValue)
+				qt.changeBoundary(state.boundary)
 					qt.calculateLevelOfDetail({
 						cameraPosition: [x, y, z],
-						levelsOfDetail: levelOfDetailValue,
+						levelsOfDetail: state.levelOfDetail,
 						qt,
-						maxNumberOfCalculationsPerFrame: workloadBudgetValue,
+						maxNumberOfCalculationsPerFrame: state.workLoad,
 					}).process()
 
 					const nodes = qt.getChildren()
