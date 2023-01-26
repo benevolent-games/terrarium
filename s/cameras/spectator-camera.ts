@@ -1,5 +1,6 @@
 
 import {Theater} from "../theater/theater.js"
+import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {makeSpectatorCamera} from "@benev/toolbox/x/babylon/camera/spectator-camera.js"
 
 export function makeCamera({
@@ -19,6 +20,9 @@ export function makeCamera({
 		},
 		renderLoop: theater.renderLoop
 	})
+
+	const camParent = camera.parent as TransformNode
+	const camBaseParent = camParent.parent as TransformNode
 
 	let targetHeight = 0
 	const minimumHeightOffGround = 10
@@ -51,6 +55,7 @@ export function makeCamera({
 
 	return {
 		camera,
+		camBaseParent,
 		updateTargetHeight,
 		smoothUpdateForCameraHeight
 	}

@@ -39,18 +39,26 @@ export function makeActuator({
 	const {state, sliders} = makeSliders()
 	const settings = makeSettings()
 	const theater = makeTheater()
-	const {camera, updateTargetHeight, smoothUpdateForCameraHeight} = makeCamera({
+
+	const {
+		camera,
+		camBaseParent,
+		updateTargetHeight,
+		smoothUpdateForCameraHeight
+	} = makeCamera({
 		theater,
 		sampleHeight: oracle.sampleHeight
 	})
+
 	const frameRateDisplay = makeFramerateDisplay({
 		getFramerate() {
 			return theater.engine.getFps()
 		},
 	})
+
 	const cameraPosDisplay = makeCamPosDisplay({
 		getCameraPos() {
-			return camera.position
+			return camBaseParent.position
 		}
 	})
 
@@ -167,7 +175,7 @@ export function makeActuator({
 			camera.position.y = 50
 
 			theater.renderLoop.add(async () => {
-				const {x, z, y} = camera.position
+				const {x, z, y} = camBaseParent.position
 				qt.changeBoundary(state.boundary)
 					qt.calculateLevelOfDetail({
 						cameraPosition: [x, y, z],
