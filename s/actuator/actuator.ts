@@ -171,18 +171,19 @@ export function makeActuator({
 			} = {}
 			let prev = <Quadtree[]>[]
 			const boundary = new Node({x:0, z: 0, y:0, w: state.boundary, h:50, center: [0, 0, 0]})
-			const qt = new Quadtree(boundary, 10, undefined)
+			const qt = new Quadtree(boundary, undefined)
 			camera.position.y = 50
 
 			theater.renderLoop.add(async () => {
 				const {x, z, y} = camBaseParent.position
-				qt.changeBoundary(state.boundary)
+
 					qt.calculateLevelOfDetail({
 						cameraPosition: [x, y, z],
 						levelsOfDetail: state.levelOfDetail,
 						qt,
 						maxNumberOfCalculationsPerFrame: state.workLoad,
 					}).process()
+					qt.changeBoundary(state.boundary, state.levelOfDetail)
 
 					const nodes = qt.getChildren()
 					const xc = computeDiff(prev, nodes)

@@ -12,6 +12,7 @@ export function makeSliders() {
 
 	const levelOfDetailSlider = document.createElement("range-slider")
 	levelOfDetailSlider.setAttribute("label", "Level of detail")
+	levelOfDetailSlider.setAttribute("min", "1")
 	levelOfDetailSlider.setAttribute("initial-value", `${snap.state.levelOfDetail}`)
 	levelOfDetailSlider.setAttribute("step", "1")
 
@@ -20,7 +21,7 @@ export function makeSliders() {
 	workloadBudgetSlider.setAttribute("initial-value", `${snap.state.workLoad}`)
 	workloadBudgetSlider.setAttribute("step", "1")
 	workloadBudgetSlider.setAttribute("min", "1")
-	workloadBudgetSlider.setAttribute("max", "200")
+	workloadBudgetSlider.setAttribute("max", "400")
 
 	const boundarySlider = document.createElement("range-slider")
 	boundarySlider.setAttribute("initial-value", `${snap.state.boundary}`)

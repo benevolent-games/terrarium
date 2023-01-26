@@ -37,7 +37,6 @@ export type QuadNode = {
 
 
 export class Quadtree {
-	threshold: number
 	boundary: Boundary
 	children: Quadtree[]
 	divided: boolean
@@ -47,24 +46,22 @@ export class Quadtree {
 	workQueue: Array<Function>
 	numberOfCalculationsDone: number
 	currentChunk: Quadtree | undefined
-	levelsOfDetail: number[] | undefined
+	thresholds: number[] | undefined
 
 	constructor(
 			boundary: Boundary,
-			distanceThresholdFromMidPoint: number,
 			parent: Quadtree | undefined
 		) {
 		this.boundary = boundary
 		this.children = []
 		this.divided = false,
-		this.threshold = distanceThresholdFromMidPoint
 		this.levelOfDetail = this.getLevelOfDetail(parent)
 		this.isLeafNode = !this.divided
 		this.parent = parent
 		this.workQueue = []
 		this.numberOfCalculationsDone = 0
 		this.currentChunk = undefined
-		this.levelsOfDetail = undefined
+		this.thresholds = undefined
 	}
 
 	getLevelOfDetail(parent: Quadtree | undefined) {
@@ -115,10 +112,10 @@ export class Quadtree {
 		const bottomLeft = new Node({...bottomLeftValues})
 		const topLeft = new Node({...topLeftValues})
 
-		return [new Quadtree(topRight, 10, node),
-		new Quadtree(topLeft, 10, node),
-		new Quadtree(bottomLeft, 10, node),
-		new Quadtree(bottomRight, 10, node)]
+		return [new Quadtree(topRight, node),
+		new Quadtree(topLeft, node),
+		new Quadtree(bottomLeft, node),
+		new Quadtree(bottomRight, node)]
 	}
 
 	getCurrentNode(cameraPosition: Vector3): Quadtree | undefined {
@@ -158,25 +155,25 @@ export class Quadtree {
 		qt: Quadtree
 		maxNumberOfCalculationsPerFrame?: number
 	}) {
-		if (!qt.levelsOfDetail) {
-			qt.levelsOfDetail = generateLevelsOfDetail(levelsOfDetail, qt.boundary.w)
+		if (!qt.thresholds) {
+			qt.thresholds = generateThresholds(levelsOfDetail, qt.boundary.w)
 		}
-		if (qt.levelsOfDetail.length - 1 != levelsOfDetail) {
-			const newLevels = generateLevelsOfDetail(levelsOfDetail, qt.boundary.w)
+		if (qt.thresholds.length - 1 != levelsOfDetail) {
+			const newThresholds = generateThresholds(levelsOfDetail, qt.boundary.w)
 			this.changeLevelOfDetail(qt, levelsOfDetail)
-			qt.levelsOfDetail = newLevels
+			qt.thresholds = newThresholds
 		}
 		let currentChunkChecker = qt.getCurrentNode(new Vector3(cameraPosition[0], cameraPosition[1], cameraPosition[2]))
 		if (qt.currentChunk != currentChunkChecker) {
 			if (this.isLeafNode) {
 				const distanceToLeafNode = v3.distance(cameraPosition, [this.boundary.x, 0, this.boundary.z])
 				const distanceToParent = this.parent ? v3.distance(cameraPosition, [this.parent?.boundary.x, 0, this.parent?.boundary.z]) : undefined
-				for (let i = 0; i < qt.levelsOfDetail.length; i++) {
+				for (let i = 0; i < qt.thresholds.length; i++) {
 					if (this.levelOfDetail == i) {
-						if (distanceToLeafNode < qt.levelsOfDetail[i]) {
+						if (distanceToLeafNode < qt.thresholds[i]) {
 							qt.workQueue.push(() => this.subdivide())
 						}
-						else if (distanceToParent && distanceToParent > qt.levelsOfDetail[i - 1]) {
+						else if (distanceToParent && distanceToParent > qt.thresholds[i - 1]) {
 							qt.workQueue.push(() => this.undivide())
 						}
 					}
@@ -211,9 +208,11 @@ export class Quadtree {
 	}
 
 	undivide() {
-		this.parent!.children = []
-		this.parent!.divided = false
-		this.parent!.isLeafNode = true
+		if (this.parent) {
+			this.parent.children = []
+			this.parent.divided = false
+			this.parent.isLeafNode = true
+		}
 	}
 
 	processQueue(workQueue: Array<Function>, qt: Quadtree, maxCalculations: number) {
@@ -225,12 +224,12 @@ export class Quadtree {
 	}
 
 	changeLevelOfDetail(qt: Quadtree, newLevels: number) {
-		if (qt.levelsOfDetail!.length <= newLevels) {
+		if (qt.thresholds!.length <= newLevels) {
 			qt.workQueue.push(() => this.subdivide())
 		}
-		if (qt.levelsOfDetail!.length > newLevels) {
+		if (qt.thresholds!.length > newLevels) {
 			if (this.isLeafNode) {
-				if (this.levelOfDetail == qt.levelsOfDetail!.length - 1) {
+				if (this.levelOfDetail == qt.thresholds!.length - 1) {
 					qt.workQueue.push(() => this.undivide())
 				}
 			} else {
@@ -241,10 +240,17 @@ export class Quadtree {
 		}
 	}
 
-	changeBoundary(newBoundary: number) {
+	changeBoundary(newBoundary: number, levelsOfDetail: number) {
 		if (this.boundary.w != newBoundary) {
+			this.children = []
 			this.boundary.w = newBoundary
-			this.levelsOfDetail = generateLevelsOfDetail(this.levelOfDetail, this.boundary.w)
+			this.thresholds = generateThresholds(levelsOfDetail, this.boundary.w)
+			if (levelsOfDetail > 0) {
+				const leafNodes = this.getChildren()
+				for (const c in leafNodes) {
+					this.workQueue.push(() => leafNodes[c].subdivide())
+				}
+			} 
 		}
 	}
 }
@@ -287,7 +293,7 @@ function dictDifference<X extends {}>(prevDict: X, newDict: X) {
 	return {added, removed}
 }
 
-export const generateLevelsOfDetail = (number: number, boundary: number) => {
+export const generateThresholds = (number: number, boundary: number) => {
 	const levels: number[] = []
 	for (let i = 0; i <= number; i++) {
 		if (i == number) {
