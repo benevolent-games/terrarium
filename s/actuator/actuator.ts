@@ -22,7 +22,7 @@ import {v3} from "../toolbox/v3.js"
 import {DirectionalLight} from "@babylonjs/core/Lights/directionalLight.js"
 import {EngineInstrumentation} from "@babylonjs/core/Instrumentation/engineInstrumentation.js"
 import {SceneInstrumentation} from "@babylonjs/core/Instrumentation/sceneInstrumentation.js"
-import {computeDiff, Node, Quadtree} from "../quadtree.js"
+import {changeMeshResolution, computeDiff, Node, Quadtree} from "../quadtree.js"
 import {Color3} from "@babylonjs/core/Maths/math.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
@@ -151,7 +151,7 @@ export function makeActuator({
 			return await makeGround({
 					theater,
 					mapSize: w,
-					resolution: 30,
+					resolution: state.meshResolution,
 					terrainGenerator: oracle,
 					cliffSlopeFactor,
 					normalStrength: 1,
@@ -184,6 +184,7 @@ export function makeActuator({
 						maxNumberOfCalculationsPerFrame: state.workLoad,
 					}).process()
 					qt.changeBoundary(state.boundary, state.levelOfDetail)
+					changeMeshResolution(qt, state.meshResolution, meshes)
 
 					const nodes = qt.getChildren()
 					const xc = computeDiff(prev, nodes)

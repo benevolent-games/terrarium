@@ -8,7 +8,15 @@ export function makeSliders() {
 		levelOfDetail: 5,
 		workLoad: 40,
 		boundary: 3200,
+		meshResolution: 30
 	})
+
+	const meshResolutionSlider = document.createElement("range-slider")
+	meshResolutionSlider.setAttribute("label", "Mesh resolution")
+	meshResolutionSlider.setAttribute("initial-value", `${snap.state.meshResolution}`)
+	meshResolutionSlider.setAttribute("step", "1")
+	meshResolutionSlider.setAttribute("min", "1")
+	meshResolutionSlider.setAttribute("max", "200")
 
 	const levelOfDetailSlider = document.createElement("range-slider")
 	levelOfDetailSlider.setAttribute("label", "Level of detail")
@@ -30,6 +38,11 @@ export function makeSliders() {
 	boundarySlider.setAttribute("step", `${snap.state.boundary}`)
 	boundarySlider.setAttribute("label", "Boundary")
 
+	meshResolutionSlider.addEventListener("valuechange", (event) => {
+		const x = event.target as RangeSlider
+		snap.state.meshResolution = Number(x.value)
+	})
+
 	levelOfDetailSlider.addEventListener("valuechange", (event) => {
 		const x = event.target as RangeSlider
 		snap.state.levelOfDetail = Number(x.value)
@@ -48,6 +61,7 @@ export function makeSliders() {
 			boundarySlider,
 			workloadBudgetSlider,
 			levelOfDetailSlider,
+			meshResolutionSlider
 		},
 		state: snap.state
 	}
