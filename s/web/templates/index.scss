@@ -39,3 +39,21 @@ canvas {
 .counter {
 	opacity: 0.6;
 }
+
+.camera-pos {
+	position: fixed;
+	top: 0;
+	left: 10px;
+	opacity: .7;
+	text-shadow: -2px 2px 3px black;
+	color: whitesmoke;
+}
+
+.wrapper {
+	display: flex;
+	margin-top: 1em;
+}
+
+.sliders {
+	margin-left: 2em;
+}
