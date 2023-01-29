@@ -2,7 +2,7 @@
 import {Matrix} from "@babylonjs/core/Maths/math.js"
 import {GroundMesh} from "@babylonjs/core/Meshes/groundMesh.js"
 
-import {V3, v3} from "../toolbox/v3.js"
+import {V3, v3} from "@benev/toolbox/x/utils/v3.js"
 import {Cursor} from "../cursor/cursor.js"
 import {Theater} from "../theater/theater.js"
 

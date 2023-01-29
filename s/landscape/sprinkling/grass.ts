@@ -3,7 +3,7 @@ import {Mesh} from "@babylonjs/core/Meshes/mesh.js"
 import {Vector3} from "@babylonjs/core/Maths/math.js"
 
 import {ShadowControl} from "../lighting.js"
-import {v3, V3} from "../../toolbox/v3.js"
+import {v3, V3} from "@benev/toolbox/x/utils/v3.js"
 import {Randomly} from "../../toolbox/randomly.js"
 import {Oracle} from "../../oracle/oracle.js"
 import {NodeMaterial} from "@babylonjs/core/Materials/Node/nodeMaterial.js"

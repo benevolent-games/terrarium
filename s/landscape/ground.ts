@@ -5,7 +5,7 @@ import {VertexBuffer} from "@babylonjs/core/Buffers/buffer.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {VertexData} from "@babylonjs/core/Meshes/mesh.vertexData.js"
 
-import {V3} from "../toolbox/v3.js"
+import {V3} from "@benev/toolbox/x/utils/v3.js"
 import {Theater} from "../theater/theater.js"
 import {Oracle} from "../oracle/oracle.js"
 import {loadShader} from "../toolbox/babylon/load-shader.js"

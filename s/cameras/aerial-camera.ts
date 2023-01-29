@@ -1,5 +1,5 @@
 
-import {v3} from "../toolbox/v3.js"
+import {v3} from "@benev/toolbox/x/utils/v3.js"
 import {cap} from "../toolbox/numpty.js"
 import {Cursor} from "../cursor/cursor.js"
 import {Theater} from "../theater/theater.js"

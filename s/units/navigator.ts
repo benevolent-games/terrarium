@@ -1,7 +1,7 @@
 
 import {Matrix} from "@babylonjs/core/Maths/math.js"
 
-import {V3} from "../toolbox/v3.js"
+import {V3} from "@benev/toolbox/x/utils/v3.js"
 import {Theater} from "../theater/theater.js"
 import {spawnBox} from "../hand/spawn-box.js"
 import {loop2d} from "../toolbox/loop2d.js"

@@ -1,6 +1,6 @@
 import {Vector3} from "@babylonjs/core/Maths/math.js"
 import {GroundMesh} from "@babylonjs/core/Meshes/groundMesh.js"
-import {v3, V3} from "./toolbox/v3.js"
+import {v3, V3} from "@benev/toolbox/x/utils/v3.js"
 
 export type Boundary = {
 	x: number

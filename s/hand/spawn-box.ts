@@ -5,7 +5,7 @@ import {Color3} from "@babylonjs/core/Maths/math.color.js"
 import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 // import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 
-import {v3, V3} from "../toolbox/v3.js"
+import {v3, V3} from "@benev/toolbox/x/utils/v3.js"
 
 export function spawnBox({
 		scene, size, position, color, unlit,

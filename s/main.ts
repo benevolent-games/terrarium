@@ -1,8 +1,8 @@
 
-import {easing} from "./toolbox/easing.js"
 import {makeOracle} from "./oracle/oracle.js"
 import {makeActuator} from "./actuator/actuator.js"
 import {makeRandomToolkit} from "./toolbox/randomly.js"
+import {easing} from "@benev/toolbox/x/utils/easing.js"
 
 export function makeTerrarium() {
 

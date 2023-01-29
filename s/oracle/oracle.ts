@@ -1,6 +1,6 @@
 
 import {NoiseLayer} from "../types.js"
-import {v3, V3} from "../toolbox/v3.js"
+import {v3, V3} from "@benev/toolbox/x/utils/v3.js"
 import {Randomly} from "../toolbox/randomly.js"
 import {prepareNoise} from "../toolbox/noise.js"
 

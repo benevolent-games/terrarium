@@ -3,7 +3,7 @@ import {AbstractMesh} from "@babylonjs/core/Meshes/abstractMesh.js"
 import {DirectionalLight} from "@babylonjs/core/Lights/directionalLight.js"
 import {ShadowGenerator} from "@babylonjs/core/Lights/Shadows/shadowGenerator.js"
 
-import {v3, V3} from "../toolbox/v3.js"
+import {v3, V3} from "@benev/toolbox/x/utils/v3.js"
 import {Theater} from "../theater/theater.js"
 import {CascadedShadowGenerator} from "@babylonjs/core/Lights/Shadows/cascadedShadowGenerator.js"
 
