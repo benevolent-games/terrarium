@@ -1,5 +1,5 @@
 
-import {cap} from "../toolbox/numpty.js"
+import {cap} from "@benev/toolbox/x/utils/numpty.js"
 import {CursorIcon} from "./cursor-types.js"
 import {Settings} from "../settings/settings.js"
 

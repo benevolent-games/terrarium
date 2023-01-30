@@ -1,8 +1,8 @@
 
 import {NoiseLayer} from "../types.js"
 import {v3, V3} from "@benev/toolbox/x/utils/v3.js"
-import {Randomly} from "../toolbox/randomly.js"
-import {prepareNoise} from "../toolbox/noise.js"
+import {Randomly} from "@benev/toolbox/x/utils/randomly.js"
+import {prepareNoise} from "@benev/toolbox/x/utils/noise.js"
 
 export type Oracle = ReturnType<typeof makeOracle>
 

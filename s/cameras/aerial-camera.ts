@@ -1,6 +1,6 @@
 
 import {v3} from "@benev/toolbox/x/utils/v3.js"
-import {cap} from "../toolbox/numpty.js"
+import {cap} from "@benev/toolbox/x/utils/numpty.js"
 import {Cursor} from "../cursor/cursor.js"
 import {Theater} from "../theater/theater.js"
 import {InputTracker} from "../inputs/input-tracker.js"

@@ -5,7 +5,7 @@ import {PBRMaterial} from "@babylonjs/core/Materials/PBR/pbrMaterial.js"
 
 import {ShadowControl} from "./lighting.js"
 import {Theater} from "../theater/theater.js"
-import {Randomly} from "../toolbox/randomly.js"
+import {Randomly} from "@benev/toolbox/x/utils/randomly.js"
 import {loadGlb} from "../toolbox/babylon/load-glb.js"
 import {Oracle} from "../oracle/oracle.js"
 import {sprinkleTrees, TreeDetails} from "./sprinkling/trees.js"

@@ -4,7 +4,7 @@ import {Vector3} from "@babylonjs/core/Maths/math.js"
 
 import {ShadowControl} from "../lighting.js"
 import {v3, V3} from "@benev/toolbox/x/utils/v3.js"
-import {Randomly} from "../../toolbox/randomly.js"
+import {Randomly} from "@benev/toolbox/x/utils/randomly.js"
 import {Oracle} from "../../oracle/oracle.js"
 import {NodeMaterial} from "@babylonjs/core/Materials/Node/nodeMaterial.js"
 import {Scene} from "@babylonjs/core/scene.js"
@@ -46,7 +46,7 @@ export function sprinkleGrass({
 	console.log(2, grassBases)
 
 	function between(range: Range) {
-		return randomly.randomBetween(range.min, range.max)
+		return randomly.between(range.min, range.max)
 	}
 
 	const grassPositions: V3[] = []
@@ -83,13 +83,14 @@ export function sprinkleGrass({
 		const scale = between(randomizationRanges.scale)
 		// const height = between(randomizationRanges.heightAdjustment)
 		const position2 = v3.toBabylon([x, y, z])
-		const meshes = randomly.randomSelect(grassBases)
-		for (const mesh of meshes) {
-			const instance = mesh.createInstance("tree_" + (count++))
-			shadowControl.addCaster(instance)
-			instance.setAbsolutePosition(position2)
-			// instance.rotate(Vector3.Up(), randomly.random() * (Math.PI * 2))
-			instance.scaling = new Vector3(scale, scale, scale)
-		}
+		const meshes = randomly.select(grassBases)
+		if(meshes)
+			for (const mesh of meshes) {
+				const instance = mesh.createInstance("tree_" + (count++))
+				shadowControl.addCaster(instance)
+				instance.setAbsolutePosition(position2)
+				// instance.rotate(Vector3.Up(), randomly.random() * (Math.PI * 2))
+				instance.scaling = new Vector3(scale, scale, scale)
+			}
 	}
 }

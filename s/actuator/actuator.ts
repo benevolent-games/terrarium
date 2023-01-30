@@ -11,7 +11,7 @@ import {makeGround} from "../landscape/ground.js"
 import {makeTheater} from "../theater/theater.js"
 import {makeSettings} from "../settings/settings.js"
 import {setupLighting} from "../landscape/lighting.js"
-import {makeRandomToolkit} from "../toolbox/randomly.js"
+import {r as makeRandomToolkit, seed} from "@benev/toolbox/x/utils/randomly.js"
 import {sprinkleProps} from "../landscape/sprinkle-props.js"
 import {makeCounters} from "../toolbox/make-time-counter.js"
 import {makeCamera} from "../cameras/spectator-camera.js"
@@ -130,7 +130,7 @@ export function makeActuator({
 
 			const mapSize = 50
 			const cliffSlopeFactor = 0
-			const randomly = makeRandomToolkit()
+			const randomly = makeRandomToolkit(seed())
 
 			let gravityEnabled = settings.readable.enableGravityAndCollisions
 

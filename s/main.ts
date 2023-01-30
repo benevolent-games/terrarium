@@ -1,12 +1,12 @@
 
 import {makeOracle} from "./oracle/oracle.js"
 import {makeActuator} from "./actuator/actuator.js"
-import {makeRandomToolkit} from "./toolbox/randomly.js"
+import {r as makeRandomToolkit, seed} from "@benev/toolbox/x/utils/randomly.js"
 import {easing} from "@benev/toolbox/x/utils/easing.js"
 
 export function makeTerrarium() {
 
-	const randomly = makeRandomToolkit()
+	const randomly = makeRandomToolkit(seed())
 	const oracle = makeOracle({
 		randomly,
 		treeDensityScale: 200,

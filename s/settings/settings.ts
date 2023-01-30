@@ -2,7 +2,7 @@
 import {html, render} from "lit"
 
 import {makeStore} from "../toolbox/store.js"
-import {proxyState} from "../toolbox/proxy-state.js"
+import {proxyState} from "@benev/toolbox/x/utils/proxy-state.js"
 
 export interface Settings {
 	enableGravityAndCollisions: boolean
