@@ -2,6 +2,13 @@ import {Vector3} from "@babylonjs/core/Maths/math.js"
 import {GroundMesh} from "@babylonjs/core/Meshes/groundMesh.js"
 import {v3, V3} from "@benev/toolbox/x/utils/v3.js"
 
+/*
+
+TODO
+	- let's organize this into lots of little files.
+
+*/
+
 export type Boundary = {
 	x: number
 	z: number
@@ -53,6 +60,9 @@ export class Quadtree {
 			boundary: Boundary,
 			parent: Quadtree | undefined
 		) {
+
+		// TODO we could move alot of these initializers
+		// as assignemnts above
 		this.boundary = boundary
 		this.children = []
 		this.divided = false,
@@ -71,6 +81,10 @@ export class Quadtree {
 		} else return 0
 	}
 
+	// TODO let's use #private members instead
+	// TODO maybe rename `#calculateSubdividedNodes`
+	// TODO actually, this function never uses `this`,
+	//   so let's move it into `utils/calculate-subdivision.ts` or something
 	_subdivide(node: Quadtree): Quadtree[] {
 		const {x, y, w, h, z} = node.boundary
 		node.divided = true
@@ -137,6 +151,9 @@ export class Quadtree {
 		return leafNodes
 	}
 
+	// TODO this function doesn't use `this`,
+	// so there's no reason to have it attached as an instance method,
+	// so let's move it into its own file called `utils/contains.ts`
 	contains(boundary: Boundary, cords: Vector3) {
 		if (boundary) {
 			const {w, x, z} = boundary
@@ -150,6 +167,8 @@ export class Quadtree {
 		
 	}
 
+	// TODO cleanup and refactor into something beautiful and
+	// easily read and understood
 	calculateLevelOfDetail<T, N extends number>({cameraPosition, levelsOfDetail, qt, maxNumberOfCalculationsPerFrame = 30}: {
 		cameraPosition: V3,
 		levelsOfDetail: number,
@@ -204,6 +223,9 @@ export class Quadtree {
 		}
 	}
 
+	// TODO there's something fishy about a function calling another
+	// function with the same name but with an underscore.
+	// (see other todo on _subdivide)
 	subdivide() {
 		this.children = this._subdivide(this)
 	}
@@ -216,6 +238,7 @@ export class Quadtree {
 		}
 	}
 
+	// TODO no this, so let's split out to `utils/process-queue.ts`
 	processQueue(workQueue: Array<Function>, qt: Quadtree, maxCalculations: number) {
 		while (workQueue.length && qt.numberOfCalculationsDone < maxCalculations) {
 			let calculate = workQueue.shift() as Function
@@ -255,6 +278,13 @@ export class Quadtree {
 		}
 	}
 }
+
+/*
+
+TODO
+	let's move these little functions out into a `utils/` directory
+
+*/
 
 function makeKey(node: Quadtree) {
 	const {x, y, z} = node.boundary

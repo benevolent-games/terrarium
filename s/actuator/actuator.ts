@@ -30,16 +30,22 @@ import {GroundMesh} from "@babylonjs/core/Meshes/groundMesh.js"
 import {makeCamPosDisplay} from "../toolbox/make-cam-pos-display.js"
 import {makeSliders} from "../editor-ui/make-slider.js"
 
+// TODO the actuator's only job is to "draw" the world as described by the
+// oracle, efficiently, into a babylon scene.
 export function makeActuator({
 		oracle
 	}: {
 		oracle: Oracle
 	}) {
 
+	// TODO this will be moved out of actuator and into the new toolbox theater
 	const {state, sliders} = makeSliders()
 	const settings = makeSettings()
 	const theater = makeTheater()
 
+	// TODO camera should be moved out of actuator,
+	// it's probably it's own system altogether, outside of
+	// the actuator, and even outside the theater
 	const {
 		camera,
 		camBaseParent,
@@ -50,6 +56,7 @@ export function makeActuator({
 		sampleHeight: oracle.sampleHeight
 	})
 
+	// TODO this should be a standard of the new toolbox theater
 	const frameRateDisplay = makeFramerateDisplay({
 		getFramerate() {
 			return theater.engine.getFps()
@@ -62,10 +69,12 @@ export function makeActuator({
 		}
 	})
 
+	// TODO this instrumentation will be moved into toolbox
 	const engineInstrumentation = new EngineInstrumentation(theater.engine)
 	engineInstrumentation.captureGPUFrameTime = true
 	engineInstrumentation.captureShaderCompilationTime = true
 
+	// TODO this instrumentation will be moved into toolbox
 	const sceneInstrumentation = new SceneInstrumentation(theater.scene)
 	sceneInstrumentation.captureFrameTime = true
 	sceneInstrumentation.captureRenderTime = true
@@ -106,6 +115,7 @@ export function makeActuator({
 		},
 	})
 
+	// TODO this stuff will also be moved into new toolbox theater
 	function resizeAll() {
 		theater.onresize()
 	}
@@ -125,6 +135,9 @@ export function makeActuator({
 		activeMeshesEvaluationTimeCounter,
 		frameRateDisplay,
 		cameraPosDisplay,
+
+		// TODO this is the core of the actuator, let's clean this up
+		// and make it beautiful
 		async initialize() {
 			const stopwatchForSetups = stopwatch("setups")
 

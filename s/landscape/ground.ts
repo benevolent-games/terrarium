@@ -12,6 +12,13 @@ import {loadShader} from "../toolbox/babylon/load-shader.js"
 import {Color3, Vector3} from "@babylonjs/core/Maths/math.js"
 import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 
+/*
+
+TODO
+	let's cleanup and refactor this file
+
+*/
+
 export async function makeGround({
 		theater: {scene},
 		mapSize,
