@@ -22,13 +22,16 @@ import {v3} from "@benev/toolbox/x/utils/v3.js"
 import {DirectionalLight} from "@babylonjs/core/Lights/directionalLight.js"
 import {EngineInstrumentation} from "@babylonjs/core/Instrumentation/engineInstrumentation.js"
 import {SceneInstrumentation} from "@babylonjs/core/Instrumentation/sceneInstrumentation.js"
-import {changeMeshResolution, computeDiff, Node, Quadtree} from "../quadtree.js"
+import {Quadtree} from "../quadtree.js"
 import {Color3} from "@babylonjs/core/Maths/math.js"
 import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder.js"
 import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial.js"
 import {GroundMesh} from "@babylonjs/core/Meshes/groundMesh.js"
 import {makeCamPosDisplay} from "../toolbox/make-cam-pos-display.js"
 import {makeSliders} from "../editor-ui/make-slider.js"
+import {computeDiff} from "../utils/compute-diff.js"
+import {Node} from "../node.js"
+import {changeMeshResolution} from "../utils/change-mesh-resolution.js"
 
 // TODO the actuator's only job is to "draw" the world as described by the
 // oracle, efficiently, into a babylon scene.
