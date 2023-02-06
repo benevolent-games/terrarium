@@ -6,11 +6,13 @@ import {Engine} from "@babylonjs/core/Engines/engine.js"
 import {Color3, Color4} from "@babylonjs/core/Maths/math.color.js"
 import {CubeTexture} from "@babylonjs/core/Materials/Textures/cubeTexture.js"
 import {DepthRenderer} from "@babylonjs/core/Rendering/depthRenderer.js"
+import {BenevTheater} from "@benev/toolbox/x/babylon/theater/element.js"
 
 export type Theater = ReturnType<typeof makeTheater>
 
 export function makeTheater() {
-	const canvas = document.createElement("canvas")
+	const benevTheater = <BenevTheater>document.createElement("benev-theater")
+	const canvas = benevTheater.babylon.canvas
 	canvas.className = "theater"
 
 	const engine = new Engine(canvas, true)
@@ -35,6 +37,7 @@ export function makeTheater() {
 	const renderLoop = new Set<() => void>()
 
 	return {
+		benevTheater,
 		canvas,
 		scene,
 		engine,

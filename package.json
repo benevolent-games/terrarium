@@ -33,7 +33,7 @@
 		"@babylonjs/core": "^5.43.1",
 		"@babylonjs/loaders": "^5.43.1",
 		"@benev/nubs": "^0.0.7",
-		"@benev/toolbox": "^0.0.0-dev.4",
+		"@benev/toolbox": "^0.0.0-dev.6",
 		"@chasemoskal/snapstate": "^0.0.9",
 		"es-module-shims": "^1.6.3",
 		"simplex-noise": "^4.0.1",
