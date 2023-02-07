@@ -19,7 +19,7 @@ export function makeWorldContainer() {
 			container.onmousemove = cursor.onmousemove
 			function resizeAll() {
 				cursor.onresize()
-				theater.onresize()
+				theater.resize()
 			}
 			window.addEventListener("resize", resizeAll)
 			document.addEventListener("fullscreenchange", resizeAll)

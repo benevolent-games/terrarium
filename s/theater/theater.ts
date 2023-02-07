@@ -1,10 +1,7 @@
 
 import "@babylonjs/core/Rendering/depthRendererSceneComponent.js"
 
-import {Scene} from "@babylonjs/core/scene.js"
-import {Engine} from "@babylonjs/core/Engines/engine.js"
-import {Color3, Color4} from "@babylonjs/core/Maths/math.color.js"
-import {CubeTexture} from "@babylonjs/core/Materials/Textures/cubeTexture.js"
+import {Color4} from "@babylonjs/core/Maths/math.color.js"
 import {DepthRenderer} from "@babylonjs/core/Rendering/depthRenderer.js"
 import {BenevTheater} from "@benev/toolbox/x/babylon/theater/element.js"
 
@@ -14,13 +11,7 @@ export function makeTheater() {
 	const benevTheater = <BenevTheater>document.createElement("benev-theater")
 	const canvas = benevTheater.babylon.canvas
 	canvas.className = "theater"
-
-	const engine = new Engine(canvas, true)
-
-	const scene = new Scene(engine, {
-		useGeometryUniqueIdsMap: true,
-		useMaterialMeshMap: true,
-	})
+	const {resize, start, stop, renderLoop, scene, engine} = benevTheater.babylon
 
 	scene.onPointerDown = evnt => {
 		if(evnt.button === 0) engine.enterPointerlock();
@@ -34,7 +25,6 @@ export function makeTheater() {
 	;(<any>window).engine = engine
 	
 	// scene.performancePriority = 2
-	const renderLoop = new Set<() => void>()
 
 	return {
 		benevTheater,
@@ -42,21 +32,8 @@ export function makeTheater() {
 		scene,
 		engine,
 		renderLoop,
-		onresize() {
-			const {width, height} = canvas.getBoundingClientRect()
-			canvas.width = width
-			canvas.height = height
-			engine.resize()
-		},
-		start() {
-			engine.runRenderLoop(() => {
-				for (const routine of renderLoop)
-					routine()
-				scene.render()
-			})
-		},
-		stop() {
-			engine.stopRenderLoop()
-		},
+		resize,
+		start,
+		stop,
 	}
 }

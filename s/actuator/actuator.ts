@@ -59,84 +59,17 @@ export function makeActuator({
 		sampleHeight: oracle.sampleHeight
 	})
 
-	// TODO this should be a standard of the new toolbox theater
-	const frameRateDisplay = makeFramerateDisplay({
-		getFramerate() {
-			return theater.engine.getFps()
-		},
-	})
-
 	const cameraPosDisplay = makeCamPosDisplay({
 		getCameraPos() {
 			return camBaseParent.position
 		}
 	})
 
-	// TODO this instrumentation will be moved into toolbox
-	const engineInstrumentation = new EngineInstrumentation(theater.engine)
-	engineInstrumentation.captureGPUFrameTime = true
-	engineInstrumentation.captureShaderCompilationTime = true
-
-	// TODO this instrumentation will be moved into toolbox
-	const sceneInstrumentation = new SceneInstrumentation(theater.scene)
-	sceneInstrumentation.captureFrameTime = true
-	sceneInstrumentation.captureRenderTime = true
-	sceneInstrumentation.capturePhysicsTime = true
-	sceneInstrumentation.captureInterFrameTime = true
-	sceneInstrumentation.captureCameraRenderTime = true
-	sceneInstrumentation.captureActiveMeshesEvaluationTime = true
-
-	const {
-			gpuFrameTimeCounter,
-			frameTimeCounter,
-			drawTimeCounter,
-			interFrameCounter,
-			cameraRenderTimeCounter,
-			activeMeshesEvaluationTimeCounter
-		} = makeCounters({
-		getGpuTime: () => {
-			return (engineInstrumentation.gpuFrameTimeCounter.current * 0.000001)
-				.toFixed(2)
-		},
-		getFrameTime() {
-			return (sceneInstrumentation.frameTimeCounter.current).toFixed(2)
-		},
-		getDrawTime() {
-			return (sceneInstrumentation.drawCallsCounter.current).toFixed(2)
-		},
-		getPhysicsTime() {
-			return (sceneInstrumentation.physicsTimeCounter.current).toFixed(2)
-		},
-		getInterFrameTime() {
-			return (sceneInstrumentation.interFrameTimeCounter.current).toFixed(2)
-		},
-		getCameraRenderTime() {
-			return (sceneInstrumentation.cameraRenderTimeCounter.current).toFixed(2)
-		},
-		getActiveMeshesEvaluationTime() {
-			return (sceneInstrumentation.activeMeshesEvaluationTimeCounter.current).toFixed(2)
-		},
-	})
-
-	// TODO this stuff will also be moved into new toolbox theater
-	function resizeAll() {
-		theater.onresize()
-	}
-	window.addEventListener("resize", resizeAll)
-	document.addEventListener("fullscreenchange", resizeAll)
-	setTimeout(resizeAll, 0)
 
 	return {
 		...sliders,
 		theater,
 		settings,
-		gpuFrameTimeCounter,
-		frameTimeCounter,
-		drawTimeCounter,
-		interFrameCounter,
-		cameraRenderTimeCounter,
-		activeMeshesEvaluationTimeCounter,
-		frameRateDisplay,
 		cameraPosDisplay,
 
 		// TODO this is the core of the actuator, let's clean this up
