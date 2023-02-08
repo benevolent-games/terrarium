@@ -30,10 +30,10 @@
 		"test": "exit 0"
 	},
 	"dependencies": {
-		"@babylonjs/core": "^5.45.1",
-		"@babylonjs/loaders": "^5.45.1",
-		"@benev/nubs": "^0.0.7",
-		"@benev/toolbox": "^0.0.0-dev.7",
+		"@babylonjs/core": "^5.45.2",
+		"@babylonjs/loaders": "^5.45.2",
+		"@benev/nubs": "^0.0.8",
+		"@benev/toolbox": "^0.0.0-dev.9",
 		"@chasemoskal/snapstate": "^0.0.9",
 		"es-module-shims": "^1.6.3",
 		"simplex-noise": "^4.0.1",
