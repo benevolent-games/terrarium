@@ -20,11 +20,7 @@ document.body.appendChild(wrapper)
 wrapper.appendChild(firstColumn)
 wrapper.appendChild(secondColumn)
 
-secondColumn.appendChild(world.levelOfDetailSlider)
-secondColumn.appendChild(world.boundarySlider)
-secondColumn.appendChild(world.workloadBudgetSlider)
-secondColumn.appendChild(world.meshResolutionSlider)
-firstColumn.appendChild(world.settings.element)
+
 firstColumn.appendChild(world.cameraPosDisplay)
 ;(<any>window).theater = world.theater
 

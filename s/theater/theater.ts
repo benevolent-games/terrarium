@@ -4,6 +4,7 @@ import "@babylonjs/core/Rendering/depthRendererSceneComponent.js"
 import {Color4} from "@babylonjs/core/Maths/math.color.js"
 import {DepthRenderer} from "@babylonjs/core/Rendering/depthRenderer.js"
 import {BenevTheater} from "@benev/toolbox/x/babylon/theater/element.js"
+import {makeSliders} from "../editor-ui/make-slider.js"
 
 export type Theater = ReturnType<typeof makeTheater>
 
@@ -12,6 +13,9 @@ export function makeTheater() {
 	const canvas = benevTheater.babylon.canvas
 	canvas.className = "theater"
 	const {resize, start, stop, renderLoop, scene, engine} = benevTheater.babylon
+	const {sliders, slidersState} = makeSliders()
+
+	benevTheater.settings.addRenderer(() => sliders)
 
 	scene.onPointerDown = evnt => {
 		if(evnt.button === 0) engine.enterPointerlock();
@@ -27,6 +31,7 @@ export function makeTheater() {
 	// scene.performancePriority = 2
 
 	return {
+		slidersState,
 		benevTheater,
 		canvas,
 		scene,

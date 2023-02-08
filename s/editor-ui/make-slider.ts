@@ -1,6 +1,10 @@
 
 import {snapstate} from "@chasemoskal/snapstate"
-import {RangeSlider} from "@benev/toolbox/x/editor-ui/range-slider/element.js"
+import {html} from "lit"
+
+interface Value {
+	value: number
+}
 
 export function makeSliders() {
 
@@ -8,61 +12,50 @@ export function makeSliders() {
 		levelOfDetail: 5,
 		workLoad: 40,
 		boundary: 3200,
-		meshResolution: 30
+		meshResolution: 30,
+		gravity: false
 	})
 
-	const meshResolutionSlider = document.createElement("range-slider")
-	meshResolutionSlider.setAttribute("label", "Mesh resolution")
-	meshResolutionSlider.setAttribute("initial-value", `${snap.state.meshResolution}`)
-	meshResolutionSlider.setAttribute("step", "1")
-	meshResolutionSlider.setAttribute("min", "1")
-	meshResolutionSlider.setAttribute("max", "200")
-
-	const levelOfDetailSlider = document.createElement("range-slider")
-	levelOfDetailSlider.setAttribute("label", "Level of detail")
-	levelOfDetailSlider.setAttribute("min", "1")
-	levelOfDetailSlider.setAttribute("initial-value", `${snap.state.levelOfDetail}`)
-	levelOfDetailSlider.setAttribute("step", "1")
-
-	const workloadBudgetSlider = document.createElement("range-slider")
-	workloadBudgetSlider.setAttribute("label", "Workload budget")
-	workloadBudgetSlider.setAttribute("initial-value", `${snap.state.workLoad}`)
-	workloadBudgetSlider.setAttribute("step", "1")
-	workloadBudgetSlider.setAttribute("min", "1")
-	workloadBudgetSlider.setAttribute("max", "400")
-
-	const boundarySlider = document.createElement("range-slider")
-	boundarySlider.setAttribute("initial-value", `${snap.state.boundary}`)
-	boundarySlider.setAttribute("min", `${snap.state.boundary}`)
-	boundarySlider.setAttribute("max", "102400")
-	boundarySlider.setAttribute("step", `${snap.state.boundary}`)
-	boundarySlider.setAttribute("label", "Boundary")
-
-	meshResolutionSlider.addEventListener("valuechange", (event) => {
-		const x = event.target as RangeSlider
-		snap.state.meshResolution = Number(x.value)
-	})
-
-	levelOfDetailSlider.addEventListener("valuechange", (event) => {
-		const x = event.target as RangeSlider
-		snap.state.levelOfDetail = Number(x.value)
-	})
-	workloadBudgetSlider.addEventListener("valuechange", (event) => {
-		const x = event.target as RangeSlider
-		snap.state.workLoad = Number(x.value)
-	})
-	boundarySlider.addEventListener("valuechange", (event) => {
-		const x = event.target as RangeSlider
-		snap.state.boundary = Number(x.value)
-	})
+	const sliders = html`
+		<benev-checkbox
+			@change=${({detail}: CustomEvent<boolean>) => snap.state.gravity = detail}>
+			Enable gravity and collisions
+		</benev-checkbox>
+		<range-slider
+			label="Level of detail"
+			initial-value="${snap.state.levelOfDetail}"
+			step="1"
+			min="1"
+			@valuechange=${({detail}: CustomEvent<Value>) => snap.state.levelOfDetail = Number(detail.value)}>
+		</range-slider>
+		<range-slider
+			label="Mesh resolution"
+			initial-value="${snap.state.meshResolution}"
+			step="1"
+			min="1"
+			max="200"
+			@valuechange=${({detail}: CustomEvent<Value>) => snap.state.meshResolution = Number(detail.value)}>
+		</range-slider>
+		<range-slider
+			label="Workload budget"
+			initial-value="${snap.state.workLoad}"
+			step="1"
+			min="1"
+			max="400"
+			@valuechange=${({detail}: CustomEvent<Value>) => snap.state.workLoad = Number(detail.value)}>
+		</range-slider>
+		<range-slider
+			label="Boundary"
+			initial-value="${snap.state.boundary}"
+			step=${snap.state.boundary}
+			min=${snap.state.boundary}
+			max="102400"
+			@valuechange=${({detail}: CustomEvent<Value>) => snap.state.boundary = Number(detail.value)}>
+		</range-slider>
+	`
 
 	return {
-		sliders: {
-			boundarySlider,
-			workloadBudgetSlider,
-			levelOfDetailSlider,
-			meshResolutionSlider
-		},
-		state: snap.state
+		sliders,
+		slidersState: snap.state
 	}
 }
