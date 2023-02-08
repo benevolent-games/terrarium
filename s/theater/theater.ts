@@ -15,7 +15,7 @@ export function makeTheater() {
 	const {resize, start, stop, renderLoop, scene, engine} = benevTheater.babylon
 	const {sliders, slidersState} = makeSliders()
 
-	benevTheater.settings.addRenderer(() => sliders)
+	benevTheater.settings.addRenderer(sliders)
 
 	scene.onPointerDown = evnt => {
 		if(evnt.button === 0) engine.enterPointerlock();
