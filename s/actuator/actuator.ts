@@ -46,17 +46,9 @@ export function makeActuator({
 		nubContext
 	})
 
-	const cameraPosDisplay = makeCamPosDisplay({
-		getCameraPos() {
-			return camBaseParent.position
-		}
-	})
-
 
 	return {
 		theater,
-		cameraPosDisplay,
-
 		// TODO this is the core of the actuator, let's clean this up
 		// and make it beautiful
 		async initialize() {

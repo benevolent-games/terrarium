@@ -16,7 +16,6 @@ wrapper.appendChild(firstColumn)
 wrapper.appendChild(secondColumn)
 
 
-firstColumn.appendChild(world.cameraPosDisplay)
 ;(<any>window).theater = world.theater
 
 world.initialize()
