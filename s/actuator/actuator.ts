@@ -31,6 +31,7 @@ export function makeActuator({
 
 	const theater = makeTheater()
 	const state = theater.slidersState
+	const {nubContext} = theater
 	// TODO camera should be moved out of actuator,
 	// it's probably it's own system altogether, outside of
 	// the actuator, and even outside the theater
@@ -41,7 +42,8 @@ export function makeActuator({
 		smoothUpdateForCameraHeight
 	} = makeCamera({
 		theater,
-		sampleHeight: oracle.sampleHeight
+		sampleHeight: oracle.sampleHeight,
+		nubContext
 	})
 
 	const cameraPosDisplay = makeCamPosDisplay({

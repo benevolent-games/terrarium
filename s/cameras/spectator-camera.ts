@@ -2,13 +2,19 @@
 import {Theater} from "../theater/theater.js"
 import {TransformNode} from "@babylonjs/core/Meshes/transformNode.js"
 import {makeSpectatorCamera} from "@benev/toolbox/x/babylon/camera/spectator-camera.js"
+import {NubContext} from "@benev/nubs"
 
 export function makeCamera({
-		theater, sampleHeight
+		theater, sampleHeight, nubContext
 	}: {
 		theater: Theater
 		sampleHeight: (x: number, y: number, z: number) => number
+		nubContext: NubContext | undefined
 	}) {
+
+	if (!nubContext) {
+		throw new Error("nub context is missing")
+	}
 
 	const camera = makeSpectatorCamera({
 		walk: 0.7,
@@ -18,6 +24,7 @@ export function makeCamera({
 			stick: 1/50,
 			mouse: 1/1_000
 		},
+		nubContext,
 		renderLoop: theater.renderLoop
 	})
 

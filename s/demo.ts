@@ -1,9 +1,6 @@
 
 import {makeTerrarium} from "./main.js"
-import {getElements} from "@benev/toolbox/x/babylon/theater/get-elements.js"
-import {registerElements} from "@chasemoskal/magical"
-
-registerElements(getElements())
+// import "@benev/toolbox/x/html.js"
 
 const world = makeTerrarium()
 const wrapper = document.createElement("div")
@@ -13,8 +10,6 @@ const firstColumn = document.createElement("div")
 const secondColumn = document.createElement("div")
 secondColumn.classList.add("sliders")
 
-document.body.appendChild(world.theater.canvas)
-document.body.appendChild(world.theater.benevTheater)
 document.body.appendChild(wrapper)
 
 wrapper.appendChild(firstColumn)

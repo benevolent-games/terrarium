@@ -9,11 +9,10 @@ import {makeSliders} from "../editor-ui/make-slider.js"
 export type Theater = ReturnType<typeof makeTheater>
 
 export function makeTheater() {
-	const benevTheater = <BenevTheater>document.createElement("benev-theater")
-	const canvas = benevTheater.babylon.canvas
-	canvas.className = "theater"
-	const {resize, start, stop, renderLoop, scene, engine} = benevTheater.babylon
+	const benevTheater = <BenevTheater>document.querySelector("benev-theater")
+	const {nubContext, babylon: {resize, start, stop, renderLoop, scene, engine, canvas}} = benevTheater
 	const {sliders, slidersState} = makeSliders()
+	canvas.className = "theater"
 
 	benevTheater.settings.addRenderer(sliders)
 
@@ -31,6 +30,7 @@ export function makeTheater() {
 	// scene.performancePriority = 2
 
 	return {
+		nubContext,
 		slidersState,
 		benevTheater,
 		canvas,
