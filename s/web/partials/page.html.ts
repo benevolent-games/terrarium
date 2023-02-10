@@ -27,7 +27,7 @@ export default ({
 			></script>
 			<script
 				type=module-shim
-				src="${v("@benev/toolbox/x/html.js")}"
+				src="${v("/node_modules/@benev/toolbox/x/html.js")}"
 				defer
 			></script>
 			<script
